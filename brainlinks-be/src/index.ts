@@ -1,11 +1,19 @@
 import express, {Request, Response} from "express"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
+import dotenv from "dotenv";
+dotenv.config();
 
 import { JWT_PASSWORD } from "./config"
 import { hashgen } from "./hashgen"
 
-mongoose.connect("mongodb+srv://aniketsingh2151:WoHozp69WVCRZffn@cluster0.f8dop.mongodb.net/brainlinks")
+const MONGO_URL = process.env.MONGO_URL
+
+if(!MONGO_URL) {
+    throw new Error("MONGO_URL env undefined")
+}
+
+mongoose.connect(process.env.MONGO_URL!)
 import { ContentModel, UserModel, LinkModel } from "./db"
 import { ExitStatus } from "typescript"
 import { userMiddleware } from "./middleware"

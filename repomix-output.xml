@@ -1,0 +1,1406 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+brainlinks-be/
+  src/
+    db.ts
+    hashgen.ts
+    index.ts
+    middleware.ts
+  package.json
+  tsconfig.json
+  tsconfig.tsbuildinfo
+brainlinks-fe/
+  public/
+    vite.svg
+  src/
+    assets/
+      react.svg
+    components/
+      ui/
+        Button.tsx
+        Card.tsx
+        ContentModal.tsx
+        InputBox.tsx
+        Sidebar.tsx
+        SidebarItem.tsx
+        Tweet.tsx
+    hooks/
+      useContent.tsx
+      useOnClickOutside.tsx
+    icons/
+      BrainLinksIcon.tsx
+      CrossIcon.tsx
+      index.ts
+      Plusicon.tsx
+      Shareicon.tsx
+      TwitterIcon.tsx
+      YoutubeIcon.tsx
+    pages/
+      Dashboard.tsx
+      Signin.tsx
+      Signup.tsx
+    App.css
+    App.tsx
+    index.css
+    main.tsx
+    vite-env.d.ts
+  .gitignore
+  eslint.config.js
+  index.html
+  package.json
+  README.md
+  tsconfig.app.json
+  tsconfig.json
+  tsconfig.node.json
+  vite.config.ts
+.gitignore
+.repomixignore
+repomix.config.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".repomixignore">
+# Add patterns to ignore here, one per line
+# Example:
+# *.log
+# tmp/
+.env
+</file>
+
+<file path="repomix.config.json">
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "input": {
+    "maxFileSize": 52428800
+  },
+  "output": {
+    "filePath": "repomix-output.xml",
+    "style": "xml",
+    "parsableStyle": false,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "files": true,
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "compress": false,
+    "topFilesLength": 5,
+    "showLineNumbers": false,
+    "truncateBase64": false,
+    "copyToClipboard": false,
+    "tokenCountTree": false,
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100,
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
+    }
+  },
+  "include": [],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": []
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  }
+}
+</file>
+
+<file path="brainlinks-be/src/hashgen.ts">
+export function hashgen(len: number){
+    const hashPool = "qwertyuiopasdfghjklzxcvbnm1234567890";
+    
+    let ans = "";
+    const poolLength = hashPool.length;
+
+    for(let i = 0; i< len; i++){
+        // ans += hashPool[Math.floor(Math.random() * hashPool.length())]
+        ans += hashPool[Math.floor(Math.random() * poolLength)]
+    }
+
+
+}
+</file>
+
+<file path="brainlinks-be/tsconfig.json">
+{
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+
+    /* Projects */
+    // "incremental": true,                              /* Save .tsbuildinfo files to allow for incremental compilation of projects. */
+    // "composite": true,                                /* Enable constraints that allow a TypeScript project to be used with project references. */
+    // "tsBuildInfoFile": "./.tsbuildinfo",              /* Specify the path to .tsbuildinfo incremental compilation file. */
+    // "disableSourceOfProjectReferenceRedirect": true,  /* Disable preferring source files instead of declaration files when referencing composite projects. */
+    // "disableSolutionSearching": true,                 /* Opt a project out of multi-project reference checking when editing. */
+    // "disableReferencedProjectLoad": true,             /* Reduce the number of projects loaded automatically by TypeScript. */
+
+    /* Language and Environment */
+    "target": "es2016",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    // "lib": [],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+    // "jsx": "preserve",                                /* Specify what JSX code is generated. */
+    // "experimentalDecorators": true,                   /* Enable experimental support for legacy experimental decorators. */
+    // "emitDecoratorMetadata": true,                    /* Emit design-type metadata for decorated declarations in source files. */
+    // "jsxFactory": "",                                 /* Specify the JSX factory function used when targeting React JSX emit, e.g. 'React.createElement' or 'h'. */
+    // "jsxFragmentFactory": "",                         /* Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. 'React.Fragment' or 'Fragment'. */
+    // "jsxImportSource": "",                            /* Specify module specifier used to import the JSX factory functions when using 'jsx: react-jsx*'. */
+    // "reactNamespace": "",                             /* Specify the object invoked for 'createElement'. This only applies when targeting 'react' JSX emit. */
+    // "noLib": true,                                    /* Disable including any library files, including the default lib.d.ts. */
+    // "useDefineForClassFields": true,                  /* Emit ECMAScript-standard-compliant class fields. */
+    // "moduleDetection": "auto",                        /* Control what method is used to detect module-format JS files. */
+
+    /* Modules */
+    "module": "commonjs",                                /* Specify what module code is generated. */
+    "rootDir": "./src",                                  /* Specify the root folder within your source files. */
+    // "moduleResolution": "node10",                     /* Specify how TypeScript looks up a file from a given module specifier. */
+    // "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
+    // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
+    // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
+    // "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */
+    // "types": [],                                      /* Specify type package names to be included without being referenced in a source file. */
+    // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
+    // "moduleSuffixes": [],                             /* List of file name suffixes to search when resolving a module. */
+    // "allowImportingTsExtensions": true,               /* Allow imports to include TypeScript file extensions. Requires '--moduleResolution bundler' and either '--noEmit' or '--emitDeclarationOnly' to be set. */
+    // "rewriteRelativeImportExtensions": true,          /* Rewrite '.ts', '.tsx', '.mts', and '.cts' file extensions in relative import paths to their JavaScript equivalent in output files. */
+    // "resolvePackageJsonExports": true,                /* Use the package.json 'exports' field when resolving package imports. */
+    // "resolvePackageJsonImports": true,                /* Use the package.json 'imports' field when resolving imports. */
+    // "customConditions": [],                           /* Conditions to set in addition to the resolver-specific defaults when resolving imports. */
+    // "noUncheckedSideEffectImports": true,             /* Check side effect imports. */
+    // "resolveJsonModule": true,                        /* Enable importing .json files. */
+    // "allowArbitraryExtensions": true,                 /* Enable importing files with any extension, provided a declaration file is present. */
+    // "noResolve": true,                                /* Disallow 'import's, 'require's or '<reference>'s from expanding the number of files TypeScript should add to a project. */
+
+    /* JavaScript Support */
+    // "allowJs": true,                                  /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
+    // "checkJs": true,                                  /* Enable error reporting in type-checked JavaScript files. */
+    // "maxNodeModuleJsDepth": 1,                        /* Specify the maximum folder depth used for checking JavaScript files from 'node_modules'. Only applicable with 'allowJs'. */
+
+    /* Emit */
+    // "declaration": true,                              /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
+    // "declarationMap": true,                           /* Create sourcemaps for d.ts files. */
+    // "emitDeclarationOnly": true,                      /* Only output d.ts files and not JavaScript files. */
+    // "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
+    // "inlineSourceMap": true,                          /* Include sourcemap files inside the emitted JavaScript. */
+    // "noEmit": true,                                   /* Disable emitting files from a compilation. */
+    // "outFile": "./",                                  /* Specify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output. */
+    "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
+    // "removeComments": true,                           /* Disable emitting comments. */
+    // "importHelpers": true,                            /* Allow importing helper functions from tslib once per project, instead of including them per-file. */
+    // "downlevelIteration": true,                       /* Emit more compliant, but verbose and less performant JavaScript for iteration. */
+    // "sourceRoot": "",                                 /* Specify the root path for debuggers to find the reference source code. */
+    // "mapRoot": "",                                    /* Specify the location where debugger should locate map files instead of generated locations. */
+    // "inlineSources": true,                            /* Include source code in the sourcemaps inside the emitted JavaScript. */
+    // "emitBOM": true,                                  /* Emit a UTF-8 Byte Order Mark (BOM) in the beginning of output files. */
+    // "newLine": "crlf",                                /* Set the newline character for emitting files. */
+    // "stripInternal": true,                            /* Disable emitting declarations that have '@internal' in their JSDoc comments. */
+    // "noEmitHelpers": true,                            /* Disable generating custom helper functions like '__extends' in compiled output. */
+    // "noEmitOnError": true,                            /* Disable emitting files if any type checking errors are reported. */
+    // "preserveConstEnums": true,                       /* Disable erasing 'const enum' declarations in generated code. */
+    // "declarationDir": "./",                           /* Specify the output directory for generated declaration files. */
+
+    /* Interop Constraints */
+    // "isolatedModules": true,                          /* Ensure that each file can be safely transpiled without relying on other imports. */
+    // "verbatimModuleSyntax": true,                     /* Do not transform or elide any imports or exports not marked as type-only, ensuring they are written in the output file's format based on the 'module' setting. */
+    // "isolatedDeclarations": true,                     /* Require sufficient annotation on exports so other tools can trivially generate declaration files. */
+    // "allowSyntheticDefaultImports": true,             /* Allow 'import x from y' when a module doesn't have a default export. */
+    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    // "preserveSymlinks": true,                         /* Disable resolving symlinks to their realpath. This correlates to the same flag in node. */
+    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+
+    /* Type Checking */
+    "strict": true,                                      /* Enable all strict type-checking options. */
+    // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
+    // "strictNullChecks": true,                         /* When type checking, take into account 'null' and 'undefined'. */
+    // "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
+    // "strictBindCallApply": true,                      /* Check that the arguments for 'bind', 'call', and 'apply' methods match the original function. */
+    // "strictPropertyInitialization": true,             /* Check for class properties that are declared but not set in the constructor. */
+    // "strictBuiltinIteratorReturn": true,              /* Built-in iterators are instantiated with a 'TReturn' type of 'undefined' instead of 'any'. */
+    // "noImplicitThis": true,                           /* Enable error reporting when 'this' is given the type 'any'. */
+    // "useUnknownInCatchVariables": true,               /* Default catch clause variables as 'unknown' instead of 'any'. */
+    // "alwaysStrict": true,                             /* Ensure 'use strict' is always emitted. */
+    // "noUnusedLocals": true,                           /* Enable error reporting when local variables aren't read. */
+    // "noUnusedParameters": true,                       /* Raise an error when a function parameter isn't read. */
+    // "exactOptionalPropertyTypes": true,               /* Interpret optional property types as written, rather than adding 'undefined'. */
+    // "noImplicitReturns": true,                        /* Enable error reporting for codepaths that do not explicitly return in a function. */
+    // "noFallthroughCasesInSwitch": true,               /* Enable error reporting for fallthrough cases in switch statements. */
+    // "noUncheckedIndexedAccess": true,                 /* Add 'undefined' to a type when accessed using an index. */
+    // "noImplicitOverride": true,                       /* Ensure overriding members in derived classes are marked with an override modifier. */
+    // "noPropertyAccessFromIndexSignature": true,       /* Enforces using indexed accessors for keys declared using an indexed type. */
+    // "allowUnusedLabels": true,                        /* Disable error reporting for unused labels. */
+    // "allowUnreachableCode": true,                     /* Disable error reporting for unreachable code. */
+
+    /* Completeness */
+    // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
+    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+</file>
+
+<file path="brainlinks-fe/public/vite.svg">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="31.88" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 257"><defs><linearGradient id="IconifyId1813088fe1fbc01fb466" x1="-.828%" x2="57.636%" y1="7.652%" y2="78.411%"><stop offset="0%" stop-color="#41D1FF"></stop><stop offset="100%" stop-color="#BD34FE"></stop></linearGradient><linearGradient id="IconifyId1813088fe1fbc01fb467" x1="43.376%" x2="50.316%" y1="2.242%" y2="89.03%"><stop offset="0%" stop-color="#FFEA83"></stop><stop offset="8.333%" stop-color="#FFDD35"></stop><stop offset="100%" stop-color="#FFA800"></stop></linearGradient></defs><path fill="url(#IconifyId1813088fe1fbc01fb466)" d="M255.153 37.938L134.897 252.976c-2.483 4.44-8.862 4.466-11.382.048L.875 37.958c-2.746-4.814 1.371-10.646 6.827-9.67l120.385 21.517a6.537 6.537 0 0 0 2.322-.004l117.867-21.483c5.438-.991 9.574 4.796 6.877 9.62Z"></path><path fill="url(#IconifyId1813088fe1fbc01fb467)" d="M185.432.063L96.44 17.501a3.268 3.268 0 0 0-2.634 3.014l-5.474 92.456a3.268 3.268 0 0 0 3.997 3.378l24.777-5.718c2.318-.535 4.413 1.507 3.936 3.838l-7.361 36.047c-.495 2.426 1.782 4.5 4.151 3.78l15.304-4.649c2.372-.72 4.652 1.36 4.15 3.788l-11.698 56.621c-.732 3.542 3.979 5.473 5.943 2.437l1.313-2.028l72.516-144.72c1.215-2.423-.88-5.186-3.54-4.672l-25.505 4.922c-2.396.462-4.435-1.77-3.759-4.114l16.646-57.705c.677-2.35-1.37-4.583-3.769-4.113Z"></path></svg>
+</file>
+
+<file path="brainlinks-fe/src/assets/react.svg">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="35.93" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 228"><path fill="#00D8FF" d="M210.483 73.824a171.49 171.49 0 0 0-8.24-2.597c.465-1.9.893-3.777 1.273-5.621c6.238-30.281 2.16-54.676-11.769-62.708c-13.355-7.7-35.196.329-57.254 19.526a171.23 171.23 0 0 0-6.375 5.848a155.866 155.866 0 0 0-4.241-3.917C100.759 3.829 77.587-4.822 63.673 3.233C50.33 10.957 46.379 33.89 51.995 62.588a170.974 170.974 0 0 0 1.892 8.48c-3.28.932-6.445 1.924-9.474 2.98C17.309 83.498 0 98.307 0 113.668c0 15.865 18.582 31.778 46.812 41.427a145.52 145.52 0 0 0 6.921 2.165a167.467 167.467 0 0 0-2.01 9.138c-5.354 28.2-1.173 50.591 12.134 58.266c13.744 7.926 36.812-.22 59.273-19.855a145.567 145.567 0 0 0 5.342-4.923a168.064 168.064 0 0 0 6.92 6.314c21.758 18.722 43.246 26.282 56.54 18.586c13.731-7.949 18.194-32.003 12.4-61.268a145.016 145.016 0 0 0-1.535-6.842c1.62-.48 3.21-.974 4.76-1.488c29.348-9.723 48.443-25.443 48.443-41.52c0-15.417-17.868-30.326-45.517-39.844Zm-6.365 70.984c-1.4.463-2.836.91-4.3 1.345c-3.24-10.257-7.612-21.163-12.963-32.432c5.106-11 9.31-21.767 12.459-31.957c2.619.758 5.16 1.557 7.61 2.4c23.69 8.156 38.14 20.213 38.14 29.504c0 9.896-15.606 22.743-40.946 31.14Zm-10.514 20.834c2.562 12.94 2.927 24.64 1.23 33.787c-1.524 8.219-4.59 13.698-8.382 15.893c-8.067 4.67-25.32-1.4-43.927-17.412a156.726 156.726 0 0 1-6.437-5.87c7.214-7.889 14.423-17.06 21.459-27.246c12.376-1.098 24.068-2.894 34.671-5.345a134.17 134.17 0 0 1 1.386 6.193ZM87.276 214.515c-7.882 2.783-14.16 2.863-17.955.675c-8.075-4.657-11.432-22.636-6.853-46.752a156.923 156.923 0 0 1 1.869-8.499c10.486 2.32 22.093 3.988 34.498 4.994c7.084 9.967 14.501 19.128 21.976 27.15a134.668 134.668 0 0 1-4.877 4.492c-9.933 8.682-19.886 14.842-28.658 17.94ZM50.35 144.747c-12.483-4.267-22.792-9.812-29.858-15.863c-6.35-5.437-9.555-10.836-9.555-15.216c0-9.322 13.897-21.212 37.076-29.293c2.813-.98 5.757-1.905 8.812-2.773c3.204 10.42 7.406 21.315 12.477 32.332c-5.137 11.18-9.399 22.249-12.634 32.792a134.718 134.718 0 0 1-6.318-1.979Zm12.378-84.26c-4.811-24.587-1.616-43.134 6.425-47.789c8.564-4.958 27.502 2.111 47.463 19.835a144.318 144.318 0 0 1 3.841 3.545c-7.438 7.987-14.787 17.08-21.808 26.988c-12.04 1.116-23.565 2.908-34.161 5.309a160.342 160.342 0 0 1-1.76-7.887Zm110.427 27.268a347.8 347.8 0 0 0-7.785-12.803c8.168 1.033 15.994 2.404 23.343 4.08c-2.206 7.072-4.956 14.465-8.193 22.045a381.151 381.151 0 0 0-7.365-13.322Zm-45.032-43.861c5.044 5.465 10.096 11.566 15.065 18.186a322.04 322.04 0 0 0-30.257-.006c4.974-6.559 10.069-12.652 15.192-18.18ZM82.802 87.83a323.167 323.167 0 0 0-7.227 13.238c-3.184-7.553-5.909-14.98-8.134-22.152c7.304-1.634 15.093-2.97 23.209-3.984a321.524 321.524 0 0 0-7.848 12.897Zm8.081 65.352c-8.385-.936-16.291-2.203-23.593-3.793c2.26-7.3 5.045-14.885 8.298-22.6a321.187 321.187 0 0 0 7.257 13.246c2.594 4.48 5.28 8.868 8.038 13.147Zm37.542 31.03c-5.184-5.592-10.354-11.779-15.403-18.433c4.902.192 9.899.29 14.978.29c5.218 0 10.376-.117 15.453-.343c-4.985 6.774-10.018 12.97-15.028 18.486Zm52.198-57.817c3.422 7.8 6.306 15.345 8.596 22.52c-7.422 1.694-15.436 3.058-23.88 4.071a382.417 382.417 0 0 0 7.859-13.026a347.403 347.403 0 0 0 7.425-13.565Zm-16.898 8.101a358.557 358.557 0 0 1-12.281 19.815a329.4 329.4 0 0 1-23.444.823c-7.967 0-15.716-.248-23.178-.732a310.202 310.202 0 0 1-12.513-19.846h.001a307.41 307.41 0 0 1-10.923-20.627a310.278 310.278 0 0 1 10.89-20.637l-.001.001a307.318 307.318 0 0 1 12.413-19.761c7.613-.576 15.42-.876 23.31-.876H128c7.926 0 15.743.303 23.354.883a329.357 329.357 0 0 1 12.335 19.695a358.489 358.489 0 0 1 11.036 20.54a329.472 329.472 0 0 1-11 20.722Zm22.56-122.124c8.572 4.944 11.906 24.881 6.52 51.026c-.344 1.668-.73 3.367-1.15 5.09c-10.622-2.452-22.155-4.275-34.23-5.408c-7.034-10.017-14.323-19.124-21.64-27.008a160.789 160.789 0 0 1 5.888-5.4c18.9-16.447 36.564-22.941 44.612-18.3ZM128 90.808c12.625 0 22.86 10.235 22.86 22.86s-10.235 22.86-22.86 22.86s-22.86-10.235-22.86-22.86s10.235-22.86 22.86-22.86Z"></path></svg>
+</file>
+
+<file path="brainlinks-fe/src/components/ui/Tweet.tsx">
+import { useEffect, useRef } from "react";
+//useState
+
+interface TweetProps{
+    link: string;
+}
+
+const EmbeddedTweet = (props: TweetProps) => {
+    const tweetContainerRef = useRef<HTMLDivElement>(null);
+    // const [isTweetLoaded, setIsTweetLoaded] = useState(false);
+    
+    const parts = props.link.split("/");
+    const tweetID = parts[parts.length - 1];
+
+    useEffect(() => {
+        if ((window as any).twttr && (window as any).twttr.widgets && tweetContainerRef.current) {
+            tweetContainerRef.current.innerHTML = ""; //remove previous embeds
+
+            (window as any).twttr.widgets.createTweet(tweetID, tweetContainerRef.current);
+            // setIsTweetLoaded(true);
+        }
+    }, []); //isTweetLoaded
+
+    return <div ref={tweetContainerRef}></div>;
+};
+
+export default EmbeddedTweet;
+</file>
+
+<file path="brainlinks-fe/src/hooks/useContent.tsx">
+import { useState } from "react";
+import { useEffect } from "react";
+import { BACKEND_URL } from "../config";
+import axios from "axios";
+
+export function useContent() {
+    const [contents, setContents] = useState([]);
+    
+    useEffect( ()=>{
+        axios.get(`${BACKEND_URL}/api/v1/content`, {
+            headers: {
+                "Authorization": localStorage.getItem("token")
+            }
+        }).then((response) => {
+            console.log(response.data.content);
+            setContents(Array.isArray(response.data.content) ? response.data.content : ['ooga booga'])
+        });
+    }
+    , []);
+
+    return contents;
+}
+</file>
+
+<file path="brainlinks-fe/src/hooks/useOnClickOutside.tsx">
+import { useEffect, useRef } from "react";
+
+export function useOutsideClick(callback: () => void) {
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (ref.current && !ref.current.contains(event.target as Node)) {
+                callback(); // Call the provided callback function
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [callback]);
+
+    return ref; // Return the ref to be used in the component
+}
+</file>
+
+<file path="brainlinks-fe/src/icons/CrossIcon.tsx">
+export function CrossIcon () {
+    return <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+  <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+</svg>
+
+}
+</file>
+
+<file path="brainlinks-fe/src/icons/index.ts">
+export interface IconProps {
+    size: "sm" | "md" | "lg"
+
+}
+
+export const iconSizeVariants = {
+    "sm" : "size-2",
+    "md" : "size-4", 
+    "lg" : "size-6"
+}
+</file>
+
+<file path="brainlinks-fe/src/icons/TwitterIcon.tsx">
+export function TwitterIcon() {
+    return <svg className= "h-[1.5em] w-[1.5em] mr-2" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50">
+<path d="M 5.9199219 6 L 20.582031 27.375 L 6.2304688 44 L 9.4101562 44 L 21.986328 29.421875 L 31.986328 44 L 44 44 L 28.681641 21.669922 L 42.199219 6 L 39.029297 6 L 27.275391 19.617188 L 17.933594 6 L 5.9199219 6 z M 9.7167969 8 L 16.880859 8 L 40.203125 42 L 33.039062 42 L 9.7167969 8 z"></path>
+</svg>
+}
+</file>
+
+<file path="brainlinks-fe/src/icons/YoutubeIcon.tsx">
+export function YoutubeIcon() {
+    return <svg className= "h-[1.5em] w-[1.5em] mr-2" xmlns="http://www.w3.org/2000/svg" stroke = "red" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50">
+    <path d="M 24.402344 9 C 17.800781 9 11.601563 9.5 8.300781 10.199219 C 6.101563 10.699219 4.199219 12.199219 3.800781 14.5 C 3.402344 16.898438 3 20.5 3 25 C 3 29.5 3.398438 33 3.898438 35.5 C 4.300781 37.699219 6.199219 39.300781 8.398438 39.800781 C 11.902344 40.5 17.898438 41 24.5 41 C 31.101563 41 37.097656 40.5 40.597656 39.800781 C 42.800781 39.300781 44.699219 37.800781 45.097656 35.5 C 45.5 33 46 29.402344 46.097656 24.902344 C 46.097656 20.402344 45.597656 16.800781 45.097656 14.300781 C 44.699219 12.101563 42.800781 10.5 40.597656 10 C 37.097656 9.5 31 9 24.402344 9 Z M 24.402344 11 C 31.601563 11 37.398438 11.597656 40.199219 12.097656 C 41.699219 12.5 42.898438 13.5 43.097656 14.800781 C 43.699219 18 44.097656 21.402344 44.097656 24.902344 C 44 29.199219 43.5 32.699219 43.097656 35.199219 C 42.800781 37.097656 40.800781 37.699219 40.199219 37.902344 C 36.597656 38.601563 30.597656 39.097656 24.597656 39.097656 C 18.597656 39.097656 12.5 38.699219 9 37.902344 C 7.5 37.5 6.300781 36.5 6.101563 35.199219 C 5.300781 32.398438 5 28.699219 5 25 C 5 20.398438 5.402344 17 5.800781 14.902344 C 6.101563 13 8.199219 12.398438 8.699219 12.199219 C 12 11.5 18.101563 11 24.402344 11 Z M 19 17 L 19 33 L 33 25 Z M 21 20.402344 L 29 25 L 21 29.597656 Z"></path>
+    </svg>
+}
+</file>
+
+<file path="brainlinks-fe/src/vite-env.d.ts">
+/// <reference types="vite/client" />
+</file>
+
+<file path="brainlinks-fe/.gitignore">
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+</file>
+
+<file path="brainlinks-fe/eslint.config.js">
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
+
+export default tseslint.config(
+  { ignores: ['dist'] },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    },
+  },
+)
+</file>
+
+<file path="brainlinks-fe/README.md">
+# React + TypeScript + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+
+- Configure the top-level `parserOptions` property like this:
+
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
+```
+
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
+
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
+```
+</file>
+
+<file path="brainlinks-fe/tsconfig.app.json">
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src"]
+}
+</file>
+
+<file path="brainlinks-fe/tsconfig.json">
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
+</file>
+
+<file path="brainlinks-fe/tsconfig.node.json">
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["vite.config.ts"]
+}
+</file>
+
+<file path="brainlinks-be/src/middleware.ts">
+import { NextFunction, Request, Response } from "express";
+import jwt, { Jwt } from "jsonwebtoken"
+
+import { JWT_PASSWORD } from "./config";
+import { MiddlewareOptions } from "mongoose";
+
+export const userMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    const header = req.headers["authorization"];
+    const decoded = jwt.verify(header as string, JWT_PASSWORD);
+
+    if(decoded){
+        //@ts-ignore    
+        req.userId = decoded.id;
+        next() 
+    }else{
+        res.status(403).json({
+            message: "You arent logged in"
+        })
+    }
+}
+</file>
+
+<file path="brainlinks-be/package.json">
+{
+  "name": "brainlinks",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node dist/index.js",
+    "dev": "npm run build && npm run start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/cors": "^2.8.17",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^24.10.0"
+  }
+}
+</file>
+
+<file path="brainlinks-be/tsconfig.tsbuildinfo">
+{"root":["./src/config.ts","./src/db.ts","./src/hashgen.ts","./src/index.ts","./src/middleware.ts"],"version":"5.7.3"}
+</file>
+
+<file path="brainlinks-fe/src/components/ui/InputBox.tsx">
+interface InputProps {
+    placeholder: string;
+    // onChange?: () => void;
+    reference: any;
+}
+
+export function Input ({reference, placeholder}: InputProps) {
+    return <div>
+        <input ref={reference} placeholder={placeholder} type = {"text"} className="px-4 py-2 border-1 m-2 rounded" >
+        </input>
+    </div>
+}
+</file>
+
+<file path="brainlinks-fe/src/icons/BrainLinksIcon.tsx">
+export function BrainLinksIcon() {
+    return <svg className= "ml-1.5 h-[1.25em] w-[1.25em]" xmlns="http://www.w3.org/2000/svg" version="1.1" id="Layer_1" x="0px" y="0px" width="100%" viewBox="0 0 528 496" enableBackground="new 0 0 528 496" xmlSpace="preserve">
+        <path fill="#A020F0" opacity="1.000000" stroke="#A020F0" d=" M200.049484,79.975502   C220.094543,71.698158 239.815430,63.637154 259.445862,55.361542   C263.420380,53.685997 266.958893,53.591869 270.939880,55.235424   C301.402008,67.811714 331.907074,80.284119 362.415131,92.748878   C376.588226,98.539619 390.768402,104.315666 405.013245,109.926041   C408.172241,111.170212 410.331573,112.887459 411.650726,116.104271   C430.088898,161.066696 448.600189,205.999161 467.127014,250.925186   C468.537628,254.345795 468.651581,257.613586 467.226898,261.079468   C453.115997,295.407471 439.054230,329.755615 424.989441,364.102539   C420.764008,374.421234 416.482910,384.718750 412.421692,395.101959   C411.245239,398.109772 409.570190,400.125153 406.523865,401.354034   C371.946472,415.302307 337.402130,429.332550 302.848724,443.340210   C292.206116,447.654633 281.521637,451.870117 270.946991,456.345001   C268.119202,457.541595 265.717499,457.692963 262.855957,456.503906   C225.192795,440.853485 187.495361,425.285522 149.796555,409.720978   C142.105057,406.545441 134.385574,403.436401 126.651581,400.365753   C124.031868,399.325592 122.272392,397.690338 121.139542,395.013000   C110.048874,368.801636 98.868248,342.628296 87.702286,316.448822   C80.259285,298.998108 72.967079,281.479919 65.248566,264.151764   C62.763454,258.572662 62.463169,253.732117 64.956047,247.994644   C79.944847,213.497253 94.612419,178.860306 109.398621,144.274826   C113.586731,134.478683 117.822227,124.702789 122.011444,114.907112   C122.892639,112.846611 124.076134,111.272003 126.303009,110.359116   C150.784882,100.323029 175.234818,90.209015 200.049484,79.975502  M203.247498,213.658264   C197.954697,226.674698 192.661896,239.691116 187.180206,253.172043   C211.943222,253.172043 235.850418,253.172043 259.252289,253.172043   C242.278381,236.222336 225.307892,219.276016 208.229126,202.221588   C206.697556,205.665619 205.083633,209.294876 203.247498,213.658264  M272.477997,332.744904   C288.173492,326.282471 303.868988,319.820007 319.126709,313.537811   C301.552673,296.085571 284.465088,279.116394 267.880981,262.647247   C267.880981,285.722717 267.880981,309.804626 267.880981,333.829102   C269.563812,334.469513 270.634918,333.470947 272.477997,332.744904  M274.576019,243.091629   C289.488678,228.286545 304.401306,213.481461 319.886810,198.107651   C302.251282,190.771942 285.763092,183.913483 268.342377,176.667130   C268.342377,201.548874 268.342377,225.188293 268.342377,248.827713   C268.628143,249.144165 268.913940,249.460617 269.199707,249.777069   C270.836090,247.717407 272.472504,245.657745 274.576019,243.091629  M303.499969,253.699158   C316.732178,253.699158 329.964386,253.699158 344.308075,253.699158   C337.039673,236.164459 330.272186,219.838257 323.529785,203.572571   C306.585144,220.496429 290.104431,236.956955 273.342438,253.698380   C282.979645,253.698380 292.739777,253.698380 303.499969,253.699158  M262.685272,267.280487   C262.507599,266.212219 263.133759,264.914185 262.419067,264.505280   C246.007797,281.061218 229.744095,297.468292 213.302246,314.055084   C229.177597,320.569519 245.455994,327.249359 262.683136,334.318481   C262.683136,311.294525 262.683136,289.697601 262.685272,267.280487  M244.153610,184.692932   C234.021286,188.981995 223.888947,193.271042 214.178894,197.381348   C230.575470,213.686829 246.495895,229.518799 262.121094,245.057190   C262.121094,223.068039 262.121094,200.502502 262.121094,177.395737   C255.917892,179.915009 250.390106,182.159973 244.153610,184.692932  M235.098083,282.576996   C242.885727,274.695496 250.673386,266.813995 258.559601,258.832733   C235.517838,258.832733 212.748016,258.832733 189.383301,258.832733   C196.242020,275.213898 202.813873,290.909973 209.842819,307.697723   C218.650406,298.944366 226.622498,291.021332 235.098083,282.576996  M332.429626,258.901245   C313.367249,258.901245 294.304871,258.901245 275.931366,258.901245   C291.652130,274.727783 307.592468,290.775391 323.933228,307.226135   C330.557373,291.390076 337.184479,275.546936 344.148163,258.899139   C339.952209,258.899139 336.674164,258.899139 332.429626,258.901245  M372.645142,408.071777   C379.043579,405.075745 385.964752,403.245422 393.415100,398.961029   C370.717926,398.961029 349.451324,398.961456 328.184692,398.960480   C325.762146,398.960358 324.290375,400.557007 322.746277,402.105499   C310.047699,414.840210 297.327606,427.553528 284.623322,440.282562   C283.431274,441.476929 282.302612,442.734528 281.144501,443.962769   C281.374237,444.232697 281.603943,444.502625 281.833649,444.772522   C311.875031,432.652802 341.916443,420.533081 372.645142,408.071777  M109.899567,351.701813   C113.906860,361.211426 117.914146,370.721039 121.921440,380.230652   C122.690681,359.808350 122.645950,339.660187 122.741814,319.512695   C122.755257,316.687439 121.463387,314.857605 119.624954,313.046783   C111.912506,305.450287 104.271301,297.781464 96.560959,290.182800   C89.777687,283.497803 82.937134,276.870880 76.121880,270.218323   C75.866013,270.403198 75.610153,270.588074 75.354286,270.772919   C86.758194,297.520538 98.162109,324.268158 109.899567,351.701813  M447.981567,221.488541   C435.709717,191.837219 423.437866,162.185883 411.166016,132.534561   C410.186829,153.603622 410.189056,174.354797 410.183197,195.105972   C410.182617,197.111801 411.296112,198.509399 412.603699,199.848129   C426.767029,214.349167 440.920807,228.859543 455.077179,243.367355   C455.489288,243.033005 455.901398,242.698639 456.313477,242.364273   C453.644043,235.636581 450.974609,228.908890 447.981567,221.488541  M294.081024,81.418854   C303.029572,90.370522 312.054443,99.247940 320.878601,108.320602   C323.416016,110.929474 326.106934,111.959442 329.705475,111.924728   C341.527008,111.810661 353.351166,111.981209 365.174347,112.015755   C373.435760,112.039894 381.697266,112.020416 389.958740,112.020416   C390.027649,111.691383 390.096527,111.362343 390.165436,111.033310   C353.280731,95.957436 316.396027,80.881561 279.511322,65.805687   C279.295990,66.116432 279.080658,66.427177 278.865326,66.737923   C283.769501,71.465950 288.673676,76.193977 294.081024,81.418854  M97.750389,188.198654   C90.542427,205.246857 83.334457,222.295044 75.852448,239.991409   C77.233406,239.591934 77.635925,239.598206 77.836151,239.400055   C92.166862,225.218826 106.476234,211.016022 120.805000,196.832825   C122.346725,195.306763 122.799828,193.488510 122.797089,191.391541   C122.770592,171.126587 122.781197,150.861588 122.781197,129.896149   C114.404678,149.416428 106.233482,168.458221 97.750389,188.198654  M206.210922,111.246841   C216.469574,102.487152 225.364243,92.331703 235.088181,83.024506   C240.769638,77.586548 246.418716,72.114761 252.082367,66.658188   C251.821289,66.357529 251.560211,66.056862 251.299133,65.756203   C215.026596,80.779449 178.754059,95.802704 142.481522,110.825951   C142.554428,111.066330 142.627350,111.306709 142.700272,111.547089   C163.618866,111.547089 184.537476,111.547089 206.210922,111.246841  M249.120682,443.744171   C249.972824,443.784637 250.725693,445.114563 251.257019,444.489960   C237.589340,430.508209 223.919968,416.660492 210.448318,402.623047   C207.910217,399.978333 205.329803,398.887756 201.716675,398.917114   C183.723663,399.063232 165.728973,398.989960 147.735031,399.046600   C146.447006,399.050629 144.950729,398.608765 143.182755,400.014313   C178.691483,414.691681 213.591415,429.117432 249.120682,443.744171  M410.963165,362.496857   C410.963165,367.720520 410.963165,372.944214 410.963165,378.167877   C411.371948,378.222931 411.780701,378.277954 412.189484,378.333008   C426.713562,342.765594 441.237640,307.198212 455.761719,271.630829   C440.581360,285.030853 426.360870,298.987640 412.138031,312.942108   C410.822174,314.233093 410.775970,315.825623 410.787537,317.552216   C410.885803,332.200592 410.914398,346.849487 410.963165,362.496857  M129.663223,232.437500   C126.695869,237.898209 128.853546,243.788071 128.254532,249.449005   C127.941750,252.404922 129.433640,253.626373 132.379364,253.615845   C147.668976,253.561172 162.958908,253.594315 178.248657,253.562180   C178.847961,253.560928 179.446533,253.206711 180.122360,252.992584   C180.122360,252.326019 180.266006,251.793991 180.101364,251.386536   C175.873383,240.923431 171.600266,230.478577 167.366791,220.017685   C166.156830,217.027878 164.058655,217.889206 162.021179,218.740402   C151.452469,223.155701 140.899765,227.609344 129.663223,232.437500  M211.669189,325.767365   C210.379837,323.329407 209.967010,320.401184 207.850281,318.394531   C207.146927,318.619263 206.551895,318.630005 206.246475,318.932831   C194.788681,330.293915 183.373077,341.697571 171.907135,353.050385   C170.051971,354.887238 170.882950,356.268005 172.332901,357.678131   C175.552567,360.809326 178.827972,363.884796 181.990921,367.072021   C183.510193,368.602936 184.971710,368.703766 186.922684,367.888855   C197.656815,363.405243 208.406189,358.954102 219.220993,354.670197   C222.312027,353.445770 222.722748,351.936523 221.419464,348.996094   C218.120087,341.552155 215.112686,333.978851 211.669189,325.767365  M368.446869,218.518555   C366.094574,218.395706 365.965179,220.439026 365.360840,221.855164   C362.551758,228.437515 359.712372,235.012436 357.146484,241.690933   C355.700287,245.455170 352.912720,248.811111 353.074097,253.655640   C369.460999,253.655640 385.592682,253.653503 401.724365,253.657883   C404.195007,253.658554 404.772125,252.125488 404.765137,250.036072   C404.751801,246.036774 404.612701,242.028442 404.833191,238.040863   C405.005829,234.918350 403.873627,233.193405 400.930664,232.002960   C390.282623,227.695770 379.725494,223.163910 368.446869,218.518555  M329.407959,362.009979   C331.256470,362.766815 333.306274,363.228394 334.920502,364.328888   C344.664276,370.971619 351.988647,368.120819 358.658386,359.297089   C361.116150,356.045654 362.046600,354.359131 358.766663,351.189667   C348.465851,341.235901 338.461273,330.975616 328.330109,320.845917   C327.523804,320.039703 326.815613,319.033356 324.767609,318.959198   C320.065155,330.306213 315.268127,341.881531 310.293243,353.885986   C316.845001,356.652374 322.785828,359.160828 329.407959,362.009979  M312.700531,163.889908   C316.659821,173.305405 320.619080,182.720901 324.579712,192.139664   C326.788361,191.732422 327.618469,190.406326 328.640137,189.386124   C338.392334,179.647781 348.029083,169.790665 357.931000,160.207382   C360.916748,157.317719 360.913696,155.487930 357.981506,152.563232   C347.721619,142.329651 347.780151,142.143066 334.480865,147.532455   C326.523346,150.757156 318.408295,153.660873 310.595001,157.789032   C311.268829,159.793610 311.842163,161.499222 312.700531,163.889908  M137.573212,258.293945   C127.191551,258.406006 128.329376,257.048187 128.245499,267.658691   C128.225769,270.156677 128.385681,272.660950 128.258026,275.151855   C128.117615,277.891693 129.314514,279.387512 131.830429,280.399475   C141.550003,284.308838 151.257706,288.256989 160.860519,292.441559   C163.665329,293.663757 164.830658,292.680359 165.797485,290.342468   C168.786026,283.115906 171.850937,275.920166 174.764069,268.663452   C176.032181,265.504547 178.207108,262.606476 178.105347,258.294495   C164.769501,258.294495 151.660202,258.294495 137.573212,258.293945  M404.138397,278.224396   C405.559692,273.656281 404.339783,268.962219 404.800659,264.357666   C405.219299,260.175293 403.460938,258.820618 399.361511,258.873352   C385.535553,259.051270 371.705811,258.920593 357.877899,258.986694   C356.317810,258.994141 354.528595,258.445801 352.766174,260.409790   C357.053345,270.573730 361.441742,280.950684 365.803680,291.338745   C366.819946,293.758972 368.547333,293.299683 370.350433,292.550507   C381.414124,287.953735 392.472473,283.344147 404.138397,278.224396  M299.552551,145.833084   C297.458008,140.764420 295.301422,135.720337 293.280884,130.622345   C287.834015,116.879280 287.858032,117.014816 273.300568,117.114311   C269.061890,117.143280 267.892578,118.696907 267.946838,122.696373   C268.134064,136.500000 268.034241,150.307404 268.077454,164.113281   C268.081909,165.537186 267.632263,167.158493 269.645020,168.451324   C277.985626,165.071426 286.678772,161.817734 295.142334,158.048584   C304.971680,153.671234 303.404938,155.473053 299.552551,145.833084  M166.010941,159.872391   C162.439316,163.344055 158.882233,166.830872 155.288940,170.279938   C153.843826,171.667053 153.256638,172.973557 154.172592,175.095703   C158.712616,185.614243 163.155518,196.177063 167.441315,206.801468   C168.680283,209.872879 170.395081,209.738998 172.883972,208.670166   C179.598816,205.786575 186.374832,203.045670 193.097580,200.180099   C196.243423,198.839172 199.781372,198.225815 202.255173,195.715240   C202.024765,193.609482 200.485672,192.695251 199.351868,191.554993   C192.909851,185.076553 186.472977,178.590576 179.909332,172.236313   C175.531982,167.998596 171.984589,162.873016 166.010941,159.872391  M284.521393,349.042877   C279.193817,347.341156 274.419250,344.085663 268.893829,343.114410   C268.550842,343.695709 268.242584,343.974823 268.241150,344.255493   C268.162048,359.576385 268.101776,374.897369 268.066467,390.218414   C268.063782,391.383423 268.139282,393.002533 269.397705,393.190308   C275.333801,394.076019 281.323486,394.033020 287.261780,393.216858   C288.655029,393.025391 288.821381,391.184479 289.326447,389.982574   C293.452301,380.163971 297.442261,370.286041 301.730194,360.539062   C303.024017,357.598053 302.201813,356.308502 299.524780,355.249237   C294.728577,353.351501 289.994019,351.298065 284.521393,349.042877  M262.679443,132.505829   C262.649170,116.437057 262.651428,116.492409 246.887466,117.136589   C244.190826,117.246788 242.684464,118.143250 241.675034,120.707748   C238.877853,127.814102 235.792419,134.806381 232.897644,141.875168   C231.290115,145.800552 229.836044,149.788773 228.241302,153.934540   C239.640366,158.821075 250.382477,163.867737 262.679535,168.111374   C262.679535,155.945892 262.679535,144.724670 262.679443,132.505829  M369.492310,198.074768   C371.016632,194.384964 372.587738,190.713669 374.056915,187.002045   C379.355896,173.615067 379.254517,173.699585 369.152649,163.741791   C366.326294,160.955765 364.460327,161.085602 361.770996,163.817017   C352.195526,173.542252 342.429291,183.079498 332.768402,192.721069   C331.864777,193.622879 330.677917,194.444885 330.766083,196.944275   C341.473999,201.434341 352.531555,206.071014 364.042297,210.897705   C365.955963,206.380356 367.566620,202.578247 369.492310,198.074768  M199.915833,314.182434   C190.537994,310.336548 181.114807,306.596100 171.806076,302.589661   C168.382370,301.116119 166.777542,301.944122 165.487198,305.359741   C163.022568,311.883667 160.847107,318.664215 157.318146,324.605591   C151.420197,334.535461 153.347168,341.936157 162.648453,348.040588   C162.920990,348.219452 163.140656,348.488434 163.359863,348.737488   C165.184708,350.810944 166.802475,350.652161 168.769089,348.692657   C178.778534,338.719391 188.916077,328.874573 198.914047,318.889923   C199.999130,317.806274 202.257401,316.727997 199.915833,314.182434  M203.234314,188.099152   C204.401367,188.917694 205.267090,190.406158 207.412796,189.754578   C211.814423,179.078796 216.289658,168.224503 220.724442,157.468262   C219.934937,156.795349 219.614227,156.361221 219.186584,156.181412   C211.671432,153.021317 204.118790,149.949371 196.622910,146.744598   C181.275635,140.183029 185.885696,140.297287 174.436172,150.934570   C170.956161,154.167709 171.265686,156.212952 174.507507,159.351517   C184.074875,168.614212 193.354416,178.174210 203.234314,188.099152  M364.213348,349.052490   C365.881287,350.927124 367.591583,350.457794 368.786591,348.721039   C371.834290,344.291687 380.131714,342.334167 378.174469,335.963531   C374.775238,324.899628 369.445679,314.430084 364.957611,303.697937   C364.284058,302.087280 363.420563,301.184570 361.550537,301.946472   C351.311279,306.118561 341.062897,310.268158 329.434875,314.986572   C341.468597,326.792877 352.585907,337.700104 364.213348,349.052490  M260.732697,393.490479   C263.272369,392.487549 262.645660,390.233154 262.652435,388.339722   C262.700653,374.841980 262.696991,361.343964 262.663574,347.846161   C262.660034,346.417694 263.092651,344.802460 261.560974,343.616028   C261.152771,343.585388 260.600098,343.375793 260.197571,343.538269   C251.092926,347.212830 242.012085,350.946228 232.908936,354.624542   C230.222305,355.710144 230.746811,357.595642 231.564987,359.546265   C234.590256,366.758942 237.661194,373.952454 240.692627,381.162567   C246.987457,396.134583 242.552826,393.494781 260.732697,393.490479  M206.009460,390.614105   C207.844696,393.167053 210.347885,393.860260 213.419861,393.741394   C218.411407,393.548218 223.418518,393.788696 228.414001,393.655792   C231.964767,393.561371 235.611664,394.285431 239.164108,393.112152   C239.033157,392.218323 239.056442,391.699677 238.878525,391.262939   C235.362000,382.630280 231.796021,374.017670 228.294830,365.378845   C225.144257,357.605194 225.184128,357.618195 217.285187,361.066528   C214.540085,362.264954 211.710449,363.268250 208.948013,364.428741   C202.253204,367.241089 195.575241,370.093445 188.494537,373.097626   C193.874130,379.702576 200.094086,384.502228 206.009460,390.614105  M134.208084,224.592361   C142.661758,221.087265 151.069427,217.464417 159.591599,214.134644   C163.033936,212.789673 163.810715,211.022491 162.247025,207.707336   C160.403717,203.799377 159.102875,199.629562 157.175400,195.768707   C154.163818,189.736343 152.718750,182.953705 148.643021,177.171982   C144.914215,179.248962 142.972321,182.807068 139.912735,184.989227   C130.014236,192.049133 126.260574,201.444611 128.183090,213.383911   C128.850906,217.531189 127.491669,221.891464 129.035172,226.386490   C130.738205,225.782562 132.117981,225.293259 134.208084,224.592361  M384.259247,333.076508   C391.013367,327.637268 396.688873,321.075958 402.914062,315.086578   C403.710205,314.320618 404.621674,313.163849 404.636078,312.175812   C404.768188,303.116821 404.713837,294.055115 404.713837,284.005737   C392.850433,288.942505 382.007111,293.461578 371.156189,297.962463   C369.644562,298.589447 369.082794,299.651367 369.743378,301.128540   C374.479706,311.719025 377.924194,322.872498 384.259247,333.076508  M304.337646,367.780304   C301.392731,376.274811 296.711761,384.135406 294.355408,393.607361   C304.181641,393.607361 313.285156,393.640686 322.387543,393.554901   C323.282104,393.546478 324.374878,393.015839 325.028717,392.374054   C331.145782,386.370178 337.187042,380.289062 343.604706,373.876160   C334.398743,369.255463 325.362701,365.994141 316.495270,362.345490   C308.300568,358.973694 308.303619,358.966278 304.337646,367.780304  M334.419281,129.081039   C331.719177,126.377228 329.049286,123.642296 326.307129,120.981834   C324.784973,119.504990 323.550507,117.361427 321.160461,117.334953   C312.244720,117.236191 303.327240,117.295502 293.500763,117.295502   C298.539429,129.428772 303.261139,140.798737 308.163086,152.602768   C320.005646,147.698517 331.244415,143.044327 342.483154,138.390137   C342.835022,137.699066 343.186890,137.007980 343.538757,136.316895   C340.665222,134.071838 337.791687,131.826797 334.419281,129.081039  M400.256714,225.999451   C401.590363,226.408707 402.778961,227.804474 404.747131,226.361496   C404.747131,218.133865 404.749756,209.659821 404.744141,201.185776   C404.743317,199.967438 404.320648,198.897141 403.461487,198.026932   C397.071655,191.554810 390.903870,184.846664 383.409607,178.630173   C378.556915,190.297775 373.919647,201.447449 369.104340,213.025238   C379.660889,217.418579 389.616577,221.561859 400.256714,225.999451  M205.530701,119.837631   C199.892136,125.535561 194.253555,131.233490 188.117615,137.434036   C200.335480,142.459198 211.578171,147.083298 223.092468,151.819077   C227.949341,139.987839 232.493439,128.918488 237.300888,117.207611   C227.646667,117.207611 219.029190,117.214424 210.411758,117.202080   C208.601959,117.199486 207.264664,118.095291 205.530701,119.837631  M152.753983,322.261871   C155.875549,314.582062 158.997116,306.902222 162.244324,298.913269   C151.067688,294.079437 140.257401,289.246582 128.181427,285.034973   C128.181427,294.955139 128.166870,303.886108 128.213394,312.816803   C128.216568,313.427307 128.519150,314.195435 128.949081,314.620697   C135.054626,320.659515 141.206268,326.651733 147.798492,333.096893   C149.596664,329.215790 151.042648,326.094879 152.753983,322.261871  M192.544769,279.938538   C189.426086,274.136963 187.937622,267.565338 184.432297,262.029846   C183.121475,262.246948 182.848434,263.108704 182.551697,263.836365   C178.846527,272.921967 175.341431,282.094086 171.411453,291.080627   C169.804047,294.756226 170.697250,296.574463 174.180481,297.969849   C182.979614,301.494904 191.711807,305.186798 200.503387,308.731049   C201.584442,309.166870 202.836670,310.316803 204.382095,308.523621   C200.560638,299.346985 196.670288,290.004913 192.544769,279.938538  M357.549957,227.063751   C358.645966,224.275909 359.702881,221.471832 360.851929,218.706039   C361.598175,216.909760 361.557068,215.483124 359.512604,214.639069   C349.577087,210.537399 339.645081,206.427216 328.505554,201.821259   C335.233704,217.982727 341.446625,232.906540 347.899200,248.406036   C352.164398,241.429718 353.913940,234.236420 357.549957,227.063751  M235.335342,398.988586   C228.629288,398.988586 221.923218,398.988586 217.737122,398.988586   C231.252548,413.101532 245.796555,428.288544 261.368988,444.549438   C255.389755,430.309052 249.782623,417.531799 244.709290,404.545959   C243.028976,400.244965 240.793732,398.267731 235.335342,398.988586  M250.855927,176.317474   C253.097229,175.087845 255.882294,174.886230 258.426392,172.536179   C248.058273,168.163818 238.285553,164.049011 228.519058,159.919479   C225.986023,158.848450 225.219070,160.768204 224.509171,162.409454   C222.333038,167.440460 220.264099,172.518448 218.197723,177.596161   C216.385971,182.048172 214.633972,186.524490 212.379150,192.186417   C225.919952,186.603317 238.038605,181.606583 250.855927,176.317474  M352.991333,274.453918   C351.498291,271.024109 350.005280,267.594330 348.035370,263.069031   C341.465729,278.975342 335.382904,293.702850 328.810394,309.616089   C340.614563,304.724152 350.994080,300.422638 361.747223,295.966278   C358.775665,288.630249 356.044800,281.888428 352.991333,274.453918  M122.764854,215.519241   C122.424278,211.719666 123.523880,207.779572 122.213402,204.442017   C108.111649,218.416611 94.134995,232.267212 80.168777,246.107483   C81.266037,246.725555 82.272224,245.813004 83.269730,245.414642   C92.374825,241.778488 101.412910,237.972214 110.546509,234.410339   C122.713707,229.665421 122.742874,229.740204 122.764854,215.519241  M317.255768,319.966309   C302.684265,325.980865 288.112762,331.995422 272.440552,338.464294   C282.911774,342.723328 292.176575,346.344025 301.302765,350.285675   C304.392944,351.620331 305.831329,350.803558 306.984009,347.950806   C309.906494,340.718048 313.014618,333.559998 315.905426,326.315002   C316.718475,324.277252 318.518219,322.473541 317.255768,319.966309  M390.837067,334.361481   C386.088104,337.560699 385.888702,341.551270 388.341278,346.387939   C390.290009,350.231110 391.684326,354.353241 393.368591,358.333008   C396.985077,366.878510 400.629852,375.412079 404.619751,384.788788   C404.619751,363.038696 404.619751,342.337433 404.619751,321.636139   C404.232635,321.358551 403.845551,321.080933 403.458435,320.803345   C399.422913,325.151825 395.387390,329.500305 390.837067,334.361481  M404.715607,133.098267   C404.388916,131.855392 405.418671,130.380524 404.096497,129.215485   C398.578003,142.316986 393.068207,155.313110 387.658081,168.350601   C386.991333,169.957321 385.396698,172.026321 386.856598,173.487076   C392.604736,179.238831 398.633179,184.710449 404.727356,190.445786   C404.727356,171.500336 404.727356,152.724243 404.715607,133.098267  M295.880066,398.948547   C292.824158,398.663086 290.916840,399.959198 289.737213,402.850555   C284.399200,415.934387 278.946808,428.971558 273.567688,442.038727   C273.517120,442.161530 273.904175,442.464508 273.765839,442.298828   C287.988953,428.085571 302.240601,413.843811 317.153015,398.941772   C309.986115,398.941772 303.392639,398.941772 295.880066,398.948547  M287.497009,178.946777   C297.511078,183.115631 307.525146,187.284470 318.694855,191.934402   C313.871490,180.377182 309.577881,170.089218 305.214722,159.634613   C294.556030,164.045029 284.371979,167.649353 273.931793,173.074448   C278.916626,175.253311 282.847534,176.971497 287.497009,178.946777  M97.097153,283.403564   C105.347549,291.520660 113.597954,299.637726 122.704262,308.596893   C122.704262,300.369965 122.583633,293.414948 122.760933,286.467529   C122.836647,283.500732 121.726822,281.884125 119.015526,280.822937   C112.038582,278.092255 105.127541,275.192322 98.202087,272.331177   C91.590561,269.599762 84.994064,266.831940 78.445381,264.102783   C84.580627,270.445862 90.597351,276.666382 97.097153,283.403564  M390.001068,118.872231   C390.709778,118.562202 391.664398,118.676361 392.026459,117.667816   C371.781525,117.667816 351.570435,117.667816 330.561401,117.667816   C336.008789,123.111778 340.963043,127.780190 345.561157,132.776367   C347.892853,135.309952 350.014740,135.507248 353.003113,134.239059   C365.092072,129.108810 377.251282,124.144066 390.001068,118.872231  M170.689774,380.258362   C160.408875,384.508728 150.127975,388.759064 139.027283,393.348328   C159.935074,393.348328 179.802155,393.348328 199.669220,393.348328   C199.990448,392.918365 200.311661,392.488403 200.632874,392.058441   C197.559586,389.342377 194.373764,386.742218 191.434113,383.888489   C182.610901,375.323059 182.648392,375.284424 170.689774,380.258362  M141.405762,158.039948   C137.295242,148.305344 133.184708,138.570740 128.596375,127.704567   C128.596375,148.632889 128.596375,168.156281 128.596375,188.908920   C131.936478,185.665482 134.486511,183.176331 137.050552,180.701691   C146.869797,171.224945 146.871475,171.226685 141.405762,158.039948  M435.014221,271.610840   C428.401703,274.293793 421.769836,276.930603 415.188660,279.688354   C413.261780,280.495789 410.495148,280.971283 410.412933,283.519348   C410.170898,291.017334 410.326599,298.528168 410.326599,306.655426   C424.758148,292.084351 438.411346,278.299164 451.807190,264.773834   C446.743835,266.823975 441.227234,269.057648 435.014221,271.610840  M288.817200,83.682838   C284.029358,78.724022 279.241516,73.765205 274.453705,68.806389   C278.927338,82.348923 284.255157,95.172958 289.618805,107.981979   C290.250946,109.491577 290.810944,111.503113 292.723206,111.541573   C300.340363,111.694740 307.962372,111.604675 316.682495,111.604675   C306.893250,101.800438 298.101562,92.995277 288.817200,83.682838  M200.566101,206.503815   C200.760132,205.266296 202.075256,204.276642 201.302826,202.523804   C192.081848,206.333221 182.923355,210.160629 173.724487,213.888351   C171.222229,214.902344 171.720367,216.639999 172.409866,218.374420   C174.308716,223.150940 176.268311,227.904831 178.295868,232.628189   C180.069382,236.759689 181.967834,240.837555 184.224472,245.858948   C189.868622,232.236923 195.069214,219.685440 200.566101,206.503815  M219.487762,105.971085   C218.067078,107.676453 215.918625,108.805504 214.721268,111.796333   C221.773911,111.796333 228.215302,111.601723 234.637360,111.870163   C238.420471,112.028290 240.398468,110.527306 241.752106,107.124420   C246.769730,94.510841 251.968628,81.969376 257.099426,69.400818   C256.692047,69.021347 256.284668,68.641869 255.877304,68.262398   C243.913086,80.668198 231.948853,93.073997 219.487762,105.971085  M422.892151,235.484970   C432.056915,239.372269 441.107941,243.558990 450.178802,246.575516   C436.996643,233.333069 423.757355,220.033279 410.142883,206.356552   C410.142883,210.137543 410.150146,213.888672 410.141571,217.639771   C410.111877,230.647339 410.109772,230.647339 422.892151,235.484970  M341.464691,383.965210   C338.450592,386.715118 335.436523,389.465057 332.422455,392.214996   C332.702606,392.597534 332.982788,392.980072 333.262970,393.362610   C352.209381,393.362610 371.155823,393.362610 391.553864,393.362610   C379.971375,388.518646 369.725006,384.241730 359.485321,379.948792   C349.527557,375.773987 349.530579,375.766785 341.464691,383.965210  M146.903107,117.200066   C145.205002,117.200066 143.506882,117.200066 141.808777,117.200066   C153.952850,123.077576 166.028564,128.221909 178.147308,133.262848   C179.886749,133.986374 181.919937,135.530533 183.724182,133.714737   C189.001328,128.403839 194.123718,122.939156 199.618057,117.210129   C182.084915,117.210129 164.941544,117.210129 146.903107,117.200066  M216.834061,324.305847   C220.467407,332.995453 224.100769,341.685089 227.969284,350.937103   C238.131683,346.781494 247.793213,342.830688 258.680664,338.378571   C244.452209,332.578278 231.553238,327.326813 218.661835,322.056763   C216.878693,321.327789 215.583206,321.074463 216.834061,324.305847  M128.022385,368.465057   C128.022385,372.762512 128.022385,377.059967 128.022385,382.204865   C133.634567,368.504547 138.925674,355.625366 144.173965,342.728760   C144.831741,341.112427 146.176926,339.383270 144.447754,337.679626   C139.422607,332.728668 134.340454,327.835571 129.280670,322.919769   C128.861435,323.080780 128.442200,323.241821 128.022964,323.402832   C128.022964,338.094086 128.022964,352.785370 128.022385,368.465057  M95.537605,253.623871   C103.174698,253.625549 110.811798,253.631943 118.448883,253.625488   C120.309639,253.623901 122.484901,253.688919 122.575691,251.169495   C122.757492,246.124512 122.629669,241.068375 122.629669,235.108719   C107.680824,241.275635 93.667801,247.056473 79.654778,252.837326   C79.700958,253.099030 79.747131,253.360733 79.793304,253.622437   C84.713905,253.622437 89.634514,253.622437 95.537605,253.623871  M91.526428,258.297882   C87.750587,258.297882 83.974739,258.297882 80.198898,258.297882   C94.151199,264.455627 107.611420,271.099274 122.112297,275.941254   C123.212669,270.895081 122.498566,266.735779 122.795059,262.631958   C123.027771,259.410858 121.656921,258.201752 118.433960,258.251862   C109.796745,258.386169 101.156090,258.299835 91.526428,258.297882  M385.433899,384.919464   C388.426727,386.181732 391.419556,387.444000 395.381836,389.115173   C385.005249,378.963776 375.475189,369.640503 365.641388,360.020111   C361.968781,363.285950 357.845001,367.001953 353.736725,371.968231   C364.515472,376.405609 374.604889,380.559235 385.433899,384.919464  M372.755310,145.265411   C380.173401,138.072449 387.591492,130.879501 395.009583,123.686539   C394.727295,123.369087 394.445007,123.051628 394.162720,122.734177   C380.713348,128.336472 367.263977,133.938751 353.759705,139.563919   C354.867432,142.426376 356.757355,143.858749 358.370422,145.485199   C365.333740,152.506256 365.349091,152.491013 372.755310,145.265411  M443.027771,249.526230   C432.246765,245.503235 422.018433,240.023193 410.514252,236.576019   C410.366028,238.726807 410.164307,240.191956 410.179840,241.654800   C410.331909,255.984695 408.446167,253.494919 421.808807,253.675156   C431.329437,253.803574 440.853210,253.700073 450.375580,253.700073   C450.402710,253.397812 450.429840,253.095566 450.456970,252.793304   C448.212463,251.804428 445.967987,250.815567 443.027771,249.526230  M148.312836,383.749969   C158.044220,379.717743 167.775604,375.685547 177.497803,371.657135   C173.313553,367.363770 169.600739,363.554138 166.046860,359.907593   C156.613358,369.384430 147.209656,378.831390 138.244675,387.837585   C140.921341,386.750427 144.263123,385.393097 148.312836,383.749969  M383.455414,164.808487   C388.470886,152.728012 393.486328,140.647537 398.501801,128.567062   C398.088806,128.231918 397.675812,127.896774 397.262817,127.561638   C390.856049,134.244339 384.417053,140.896500 378.049957,147.616776   C368.024872,158.197937 367.361938,154.075500 378.701141,165.849854   C379.045990,166.207947 379.432587,166.532669 379.831085,166.831085   C381.699310,168.230286 382.480011,166.963608 383.455414,164.808487  M262.683014,73.159554   C262.512970,72.761177 262.342926,72.362801 262.172882,71.964424   C261.953217,72.175697 261.635437,72.346184 261.528198,72.604202   C258.476135,79.949310 255.252075,87.231247 252.475937,94.679962   C250.484329,100.023643 247.216400,104.945976 246.476151,110.928398   C250.274200,112.513947 253.950989,111.534897 257.508392,111.847481   C261.307251,112.181274 262.820587,110.627258 262.749756,106.676353   C262.553436,95.728928 262.681396,84.775688 262.683014,73.159554  M282.565399,111.678497   C285.353088,111.160744 284.325836,109.385857 283.730408,107.893517   C281.454651,102.189819 279.257965,96.447655 276.755951,90.842972   C273.853394,84.340996 271.771790,77.451035 268.020081,70.984947   C268.020081,80.567467 268.003357,89.677597 268.024048,98.787643   C268.054382,112.147697 268.065765,112.147675 282.565399,111.678497  M284.253632,401.977234   C284.838623,399.958282 283.754120,399.121704 281.979553,399.084290   C278.325958,399.007233 274.667603,399.004639 271.014740,399.102875   C268.614319,399.167419 268.074005,400.899811 268.072968,402.913788   C268.066711,415.144196 268.069824,427.374603 268.069824,441.029907   C273.739105,427.404205 278.880493,415.047272 284.253632,401.977234  M143.349167,358.794342   C139.982391,367.060486 136.615616,375.326630 134.196228,381.266754   C142.265396,373.580322 151.870422,364.430908 161.513931,355.244843   C157.598740,351.530945 153.832779,347.958588 149.694489,344.033051   C147.672821,348.712524 145.648773,353.397552 143.349167,358.794342  M448.119171,258.873108   C437.152344,258.895447 426.185333,258.889954 415.218842,258.964569   C413.135773,258.978760 410.443970,258.604614 410.308838,261.758942   C410.120300,266.161163 409.661377,270.615082 410.909454,275.847748   C424.391815,270.310394 437.468628,264.939606 450.545441,259.568817   C450.442139,259.311615 450.338837,259.054443 450.235565,258.797241   C449.747284,258.797241 449.259033,258.797241 448.119171,258.873108  M154.747467,146.743652   C148.122650,140.001968 141.497833,133.260284 134.873016,126.518608   C134.625290,126.704346 134.377563,126.890083 134.129822,127.075821   C139.549606,139.962280 144.969391,152.848740 150.705734,166.487900   C155.397644,162.343582 159.250290,159.082718 162.374130,154.690094   C159.831314,152.032745 157.542587,149.640930 154.747467,146.743652  M176.399658,141.142227   C178.567673,138.477417 175.978058,138.111389 174.494843,137.476288   C167.032990,134.281128 159.554153,131.122025 152.028381,128.081177   C148.187759,126.529327 144.581329,124.259560 139.898758,123.487694   C140.439713,124.437569 140.599960,124.923340 140.920975,125.252151   C146.247940,130.708374 151.491028,136.252014 156.959457,141.563446   C168.221786,152.502472 164.395035,153.361786 176.399658,141.142227  M394.251526,374.131714   C390.156708,364.278534 386.061890,354.425354 381.967072,344.572144   C381.360992,344.309631 380.754944,344.047119 380.148865,343.784576   C377.827332,346.551483 375.665375,349.475830 373.137085,352.038788   C370.834473,354.372986 371.070709,356.144836 373.268341,358.320618   C379.507812,364.497986 385.632233,370.791443 391.818726,377.022522   C393.431824,378.647278 395.106079,380.211365 397.741119,382.759613   C396.281830,379.123169 395.418793,376.972473 394.251526,374.131714  M260.871857,429.324371   C261.433777,430.134460 261.216003,431.501160 262.680237,431.988739   C262.680237,422.406525 262.696259,413.081329 262.667267,403.756256   C262.661163,401.795258 262.994110,399.381561 260.120392,399.174042   C256.403839,398.905731 252.621597,398.483734 248.487991,399.913025   C252.613480,409.747894 256.591431,419.231079 260.871857,429.324371  z"/>
+</svg>
+}
+</file>
+
+<file path="brainlinks-fe/src/icons/Plusicon.tsx">
+import { IconProps, iconSizeVariants } from "."
+
+export const PlusIcon = (props: IconProps) => {
+    return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={iconSizeVariants[props.size]}> <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+    </svg>
+}
+</file>
+
+<file path="brainlinks-fe/src/icons/Shareicon.tsx">
+import { IconProps, iconSizeVariants } from ".";
+
+export const ShareIcon = (props: IconProps) => {
+    return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className= {iconSizeVariants[props.size]}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+    </svg>
+  
+}
+</file>
+
+<file path="brainlinks-fe/src/pages/Dashboard.tsx">
+import { Button } from '../components/ui/Button'
+
+import { PlusIcon } from '../icons/Plusicon'
+import { ShareIcon } from '../icons/Shareicon'
+import { Card } from '../components/ui/Card'
+import { CreateContentModal } from '../components/ui/ContentModal'
+
+import { useState } from 'react'
+import { Sidebar } from '../components/ui/Sidebar'
+import { useContent } from '../hooks/useContent'
+
+export function Dashboard() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const contents = useContent();
+
+  return ( 
+    <>
+      <Sidebar/>
+      <div className='p-3 ml-60 min-h-screen bg-gray-100'>
+        <CreateContentModal open = {modalOpen} onClose={() => { setModalOpen(false)}}/>
+
+        <div className='flex justify-end gap-4'>
+          <Button
+            onClick={() => setModalOpen(true)} 
+            startIcon = {<PlusIcon size = "md" />}  
+            size ="md" 
+            variant="primary" 
+            text="Add Content"
+          />
+          
+          <Button
+            startIcon={ <ShareIcon size = "md" /> }
+            size ="md" 
+            variant="secondary" 
+            text="Share"
+          />
+        </div>
+        
+        <div className='flex gap-4'>
+        {contents.map(({ type, link, title }) => <Card
+            title={title}
+            type={type}
+            link={link}
+          />)}
+
+          {JSON.stringify(contents)}
+          <Card title="video" type='youtube' link='https://youtu.be/yxDpF3XqpV4?si=VSQHcoLeVORPlsoj'  />
+          <Card title="tweet" type='twitter' link='https://x.com/gunk4188/status/1892850342095708515'  />
+        </div>
+        
+        <Button 
+          size ="lg" 
+          variant="secondary" 
+          text="Share"
+        />
+
+      </div>
+    </>
+  )
+}
+
+export default Dashboard
+</file>
+
+<file path="brainlinks-fe/src/pages/Signin.tsx">
+import { Input } from "../components/ui/InputBox"
+import { Button } from "../components/ui/Button"
+
+import { useRef } from "react";
+import { BACKEND_URL } from "../config";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+export function Signin() {
+
+    const usernameRef = useRef<HTMLInputElement>();
+    const passwordRef = useRef<HTMLInputElement>();
+
+    const navigate = useNavigate();
+
+    async function signin() {
+        const username = usernameRef.current?.value;
+        const password = passwordRef.current?.value;
+        const response = await axios.post(BACKEND_URL + "/api/v1/signin", {
+            username,
+            password
+        })
+        const jwt = response.data.token;
+        localStorage.setItem("token", jwt)
+        navigate("/dashboard");
+}
+
+
+    return <div className="h-screen w-screen bg-gray-200 flex items-center justify-center">
+        <div className=" bg-white border border-purple-300 p-6 rounded-2xl min-w-48">
+            <div>
+            <Input reference = {usernameRef} placeholder="Username" />
+            <Input reference = {passwordRef} placeholder="Password" />
+            </div>
+            <div className="flex justify-center mt-2">
+                <Button onClick={signin} size="md" fullWidth = {true} variant="primary" text="Signin" loading={false} />
+            </div>
+        </div>
+    </div>
+}
+</file>
+
+<file path="brainlinks-fe/src/App.css">
+
+</file>
+
+<file path="brainlinks-fe/src/main.tsx">
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx'
+
+createRoot(document.getElementById('root')!).render(
+    <App />
+)
+</file>
+
+<file path="brainlinks-fe/vite.config.ts">
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react(), tailwindcss()], 
+})
+</file>
+
+<file path="brainlinks-be/src/db.ts">
+import mongoose, {model, Mongoose, Schema} from "mongoose"
+
+
+const userSchema = new Schema({
+    username: {type: String,
+            unique:true
+        },
+    password: String
+})
+
+export const UserModel = model("User", userSchema)
+
+const contentSchema = new Schema ({
+    title: { type: String, required: true},
+    link: { type: String, required: true},
+    type: String,
+    tags: [{type: mongoose.Types.ObjectId, ref: 'Tag'}],
+    userId: {type: mongoose.Types.ObjectId, ref: 'User', required: true},
+    share: { type: Boolean, required: false}
+})
+
+export const ContentModel = model("Content", contentSchema)
+
+const linkSchema = new Schema ({
+    hash: String,
+    userId: {type: mongoose.Types.ObjectId, required: true, unique: true, ref: 'User'}
+})
+
+export const LinkModel = model("Link", linkSchema)
+</file>
+
+<file path="brainlinks-fe/src/components/ui/Sidebar.tsx">
+import { BrainLinksIcon } from "../../icons/BrainLinksIcon";
+import { TwitterIcon } from "../../icons/TwitterIcon";
+import { YoutubeIcon } from "../../icons/YoutubeIcon";
+import { SideBarItem } from "./SidebarItem";
+
+export function Sidebar() {
+    return <div className="h-screen w-60 border-r-3 border-purple-100 bg-white fixed left-0 top-0 p-2 pt-4 flex flex-col">
+        <div className="text-3xl flex items-center pb-4 ml-3 my-4">Brainlinks    {<BrainLinksIcon/>} </div>
+
+        <SideBarItem icon = {<TwitterIcon />} text = "Twitter" />
+        <SideBarItem icon = {<YoutubeIcon/>} text = "Youtube" />
+    </div>
+
+}
+</file>
+
+<file path="brainlinks-fe/src/components/ui/SidebarItem.tsx">
+import { ReactElement } from "react";
+
+interface SideBarItemProps {
+    text: string;
+    icon: ReactElement;
+}
+
+export function SideBarItem({text, icon}: SideBarItemProps){
+    return <div className="inline-flex p-2 items-center text-gray-700 text-[17px] font-[420] my-1 ml-2 cursor-pointer hover:bg-gray-100 hover:pl-4">
+        {icon} {text}
+    </div> 
+}
+</file>
+
+<file path="brainlinks-fe/src/pages/Signup.tsx">
+import { Input } from "../components/ui/InputBox"
+import { Button } from "../components/ui/Button"
+import axios from "axios";
+import { useRef } from 'react'
+import { BACKEND_URL } from "../config";
+import { useNavigate } from "react-router-dom";
+
+
+export function Signup() {
+
+    const navigate = useNavigate();
+
+    const usernameRef = useRef<HTMLInputElement>();
+    const passwordRef = useRef<HTMLInputElement>();
+
+    async function signup() {
+        const username = usernameRef.current?.value;
+        const password = passwordRef.current?.value;
+        await axios.post(BACKEND_URL + "/api/v1/signup", {
+            username,
+            password
+        })
+        navigate("/signin");
+}
+    
+    return <div className="h-screen w-screen bg-gray-200 flex items-center justify-center">
+        <div className=" bg-white border border-purple-300 p-6 rounded-2xl min-w-48">
+            <div>
+                <Input reference = {usernameRef} placeholder="Username" />
+                <Input reference = {passwordRef} placeholder="Password" />
+            </div>
+            <div className="flex justify-center mt-2">
+                <Button onClick={signup} size="md" fullWidth = {true} variant="primary" text="Signup" loading={false} />
+            </div>
+        </div>
+    </div>
+}
+</file>
+
+<file path="brainlinks-fe/index.html">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <title>
+      Vite + React + TS
+    </title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+</file>
+
+<file path="brainlinks-fe/package.json">
+{
+  "name": "brainlinks-fe",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.0.1",
+    "axios": "^1.8.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.3.0",
+    "tailwindcss": "^4.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^24.10.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "^8.18.2",
+    "vite": "^6.0.5"
+  }
+}
+</file>
+
+<file path=".gitignore">
+node_modules
+dist
+
+.env
+config.ts
+</file>
+
+<file path="brainlinks-be/src/index.ts">
+import express, {Request, Response} from "express"
+import jwt from "jsonwebtoken"
+import mongoose from "mongoose"
+import dotenv from "dotenv";
+dotenv.config();
+
+import { JWT_PASSWORD } from "./config"
+import { hashgen } from "./hashgen"
+
+const MONGO_URL = process.env.MONGO_URL
+
+if(!MONGO_URL) {
+    throw new Error("MONGO_URL env undefined")
+}
+
+mongoose.connect(process.env.MONGO_URL!)
+import { ContentModel, UserModel, LinkModel } from "./db"
+import { ExitStatus } from "typescript"
+import { userMiddleware } from "./middleware"
+
+import cors from "cors";
+
+
+const app = express();
+app.use(express.json())
+app.use(cors());
+
+app.post("/api/v1/signup", async (req: Request,res: Response) => {
+    //Zod pending
+    const username = req.body.username
+    const password = req.body.password
+    try{
+        await UserModel.create({
+            username,
+            password
+        })
+
+        res.json("User Signed up")
+    }catch(e){
+        res.status(411).json({
+            "message": e
+        })
+    }
+})
+
+
+app.post("/api/v1/signin", async (req: Request,res: Response) =>  {
+    const username = req.body.username
+    const password = req.body.password
+    
+    const existingUser = await UserModel.findOne({
+        username,
+        password
+    })
+
+    if(existingUser){
+        const token = jwt.sign({
+            id: existingUser._id
+        }, JWT_PASSWORD)
+
+        res.json({token})
+    }
+    else{
+        res.status(403).json({
+            message: "Incorrect Credentials"
+        })
+    }
+})
+
+app.post("/api/v1/content", userMiddleware, async (req: Request,res: Response) => {
+    const link = req.body.link;
+    const title = req.body.title;
+    const type = req.body.type;
+
+    await ContentModel.create({
+        link,
+        title,
+        type,
+        //@ts-ignore
+        userId: req.userId,
+        tags: []
+    })
+
+    res.json({
+        message: "DB: Content Added in Database"
+    })
+})
+
+app.get("/api/v1/content", userMiddleware, async (req:Request, res:Response)=> {
+    //@ts-ignore
+    const userId = req.userId
+    const content = await ContentModel.find({
+        userId
+    }).populate("userId", "username")
+
+    res.json({
+        content
+    })
+})
+
+app.get("/api/v1/content/title", userMiddleware, async (req: Request, res: Response) => {
+    //@ts-ignore
+    const userId = req.userId;
+    const searchValue = req.query.searchValue;
+
+    const content = await ContentModel.find({
+        userId,
+        link: {
+            $regex: searchValue
+        }
+    }).populate("userId", "username")
+    res.json({content})
+})
+
+app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response) => {
+    const contentId = req.body.contentId;
+
+    await ContentModel.deleteOne({
+        contentId,
+        //@ts-ignore
+        userId: req.userId
+    })
+})
+
+app.post("/api/v1/brain/share", userMiddleware, async (req: Request, res: Response) => {
+    const share = req.body.share;
+    if(share){
+    //need to look up if return statement after if-if block's end is really necessary
+        const existingLink = await LinkModel.findOne({
+            //@ts-ignore
+            userId: req.userId
+        })
+
+        if(existingLink){
+            res.json({
+                hash: existingLink.hash
+            })
+            return;
+        }
+        const hash = hashgen(10)
+        await LinkModel.create({
+            //@ts-ignore
+            userId: req.userId,
+            hash
+        })
+
+        res.json({
+            hash
+        })
+        return;
+    }
+    else{
+        await LinkModel.deleteOne({
+            //@ts-ignore
+            userId: req.userId
+        })
+    
+        res.json({
+            message: "Removed link"
+        })
+    }
+    
+})
+
+app.get("api/v1/brain/:shareLink", async (req: Request, res: Response) => {
+    const hash = req.params.shareLink;
+
+    const link = await LinkModel.findOne({
+        hash
+    })
+
+    if(!link){
+        res.status(411).json({
+            message: "The shareable link in the URL doesnt exist or has expired!"
+        })
+    return;
+    }
+    
+    const content = await ContentModel.find({
+        userId: link.userId    
+    })
+
+    console.log(link)
+
+    const user = await UserModel.findOne({
+        _id: link.userId
+    })
+
+    if(!user){
+        res.status(411).json({
+            message: "Link and its corresponding content is validated, however userId stored in these databases is not validated in the User Database"
+        })
+
+    return;
+    }
+
+    res.json({
+        username: user.username,
+        content
+    })
+})
+
+
+app.listen(3000);
+</file>
+
+<file path="brainlinks-fe/src/components/ui/Card.tsx">
+import { PlusIcon } from "../../icons/Plusicon"
+import { ShareIcon } from "../../icons/Shareicon"
+import EmbeddedTweet from "./Tweet"
+
+interface CardProps {
+    title: string,
+    link: string,
+    type: "twitter" | "youtube"
+}
+
+function convertToEmbedUrl (youtubeUrl: string)  {
+    const match = youtubeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|live\/|playlist\?list=))([\w-]+)/);
+    return match ? `https://www.youtube.com/embed/${match[1]}` : undefined;
+}
+
+
+export const Card = ({title, link, type}: CardProps) => {
+    return <div> 
+        <span  className="p-4 bg-white rounded-md shadow-md border-slate-200 border-1 block max-w-96 min-h-60 min-w-72">
+            <div className = "flex justify-between">
+                
+                <div className = "flex items-center">
+                    <div className="p-2 text-gray-600"><ShareIcon size = "md" /></div>
+                    {title}
+                </div>
+                <div className = "flex items-center">
+                    <div className = "p-2 text-gray-600"><PlusIcon size = "lg"/></div>
+                    <div className = "p-2 text-gray-600">
+                        <a href = {link} target = "_blank">
+                            <ShareIcon size = "md"/>
+                        </a> 
+                    </div>
+                </div>
+            </div>
+    
+            <div className="pt-2"> 
+                {type === "youtube" && <iframe width="100%" src={convertToEmbedUrl(link)} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>}
+
+                {type === "twitter" && <EmbeddedTweet link = {link} />} 
+                {/* <blockquote className="twitter-tweet">
+                    <a href = "https://twitter.com/username/status/1892788269470851548"></a>
+                </blockquote> */}
+            </div>
+        </span>
+    </div>
+}
+</file>
+
+<file path="brainlinks-fe/src/components/ui/ContentModal.tsx">
+import axios from "axios";
+import { useOutsideClick } from "../../hooks/useOnClickOutside";
+import { CrossIcon } from "../../icons/CrossIcon";
+import { Button } from "./Button";
+import { Input } from "./InputBox";
+
+import { useRef, useState } from "react";
+import { BACKEND_URL } from "../../config";
+
+interface ModalProps {
+    open: boolean;
+    onClose: () => void;
+}
+
+enum ContentType {
+    Youtube = "youtube",
+    Twitter = "twitter"
+}
+
+export function CreateContentModal({open, onClose}: ModalProps) {
+    // const [modalOpen, setModalOpen] = useState(false); 
+    // for self-managed (uncontrolled component)
+
+    const modalRef = useOutsideClick(onClose);
+    const titleRef = useRef<HTMLInputElement>();
+    const linkRef = useRef<HTMLInputElement>();
+    
+    const [type, setType] = useState(ContentType.Youtube)
+
+    async function addContent() {
+        const title = titleRef.current?.value;
+        const link = linkRef.current?.value;
+
+        await axios.post(BACKEND_URL + "/api/v1/content", {
+            link,
+            title,
+            type
+        }, {
+            headers: {
+                "Authorization": localStorage.getItem("token")
+            }
+        })
+    }
+
+    return <div> 
+            {open && <div className="w-screen h-screen bg-black/70 fixed top-0 left-0 flex items-center justify-center backdrop-blur-none"> 
+            {/* for some reason backdrop-filter-none works, all other methods including relative-absolute and ReactPortal were useless*/}
+                    <div ref={modalRef} className="absolute bg-white  p-2 rounded opacity-100">
+                        <div className="flex justify-end">
+                            <div onClick = {onClose} className="cursor-pointer">
+                                <CrossIcon />
+                            </div>
+                        </div>
+                        <div>
+                            <Input reference = {titleRef} placeholder = "Title"/>
+                            <Input reference = {linkRef} placeholder = "Link"/>
+                        </div>
+                        <div className="flex justify-center my-2 gap-3">
+                            <Button size = "md" text = "Youtube" variant = {type === ContentType.Youtube ? "primary" : "secondary"} onClick={() => {setType(ContentType.Youtube)}} />
+                            <Button size = "md" text = "Twitter" variant = {type === ContentType.Twitter ? "primary" : "secondary"} onClick={() => {setType(ContentType.Twitter)}} />
+                        </div>
+                        <div className="flex justify-center p-2">
+                            <Button onClick = {addContent} size = "md" text = "Submit" variant = "primary" />
+                        </div>
+                    
+                    </div> 
+            </div>}
+        </div> 
+    
+}
+</file>
+
+<file path="brainlinks-fe/src/index.css">
+@import "tailwindcss";
+/* @plugin */
+
+/* @config "../tailwind.config.js" */
+
+@theme {
+  --color-purple-100: #E0E7Fe;
+  --color-purple-200: #3E38A7;
+  --color-purple-600: #5046E4;
+  --color-gray-100: #EEEEEF;
+  --color-gray-200: #E6E9ED;
+  --color-gray-600: #95989C;
+  --color-BluePurple: #703BE7;
+}
+</file>
+
+<file path="brainlinks-fe/src/components/ui/Button.tsx">
+import { ReactElement } from "react";
+
+interface ButtonProps {
+    variant: "primary" | "secondary";
+    size: "sm"  | "md" | "lg";
+    text: string;
+    startIcon?: ReactElement; //Upgrade any to suitable types later
+    endIcon?: ReactElement;
+    onClick?: () => void;
+    fullWidth?: boolean;
+    loading?: boolean;
+}
+
+type Variants = "primary" | "secondary" 
+
+// const variantStyles : {[key: Variants]: string} = {
+const variantStyles : Record<Variants, string> = {
+    "primary" : "bg-purple-600 text-white", 
+    "secondary" : "bg-purple-100 text-purple-600"
+}
+
+const defaultStyles = "rounded-md inline-flex items-center hover:cursor-pointer disabled:cursor-default"
+
+const sizeStyles = { 
+    "sm" : "py-1 px-2",
+    "md" : "py-2 px-4",
+    "lg" : "py-3 px-6"
+}
+
+export const Button =(props: ButtonProps) => {
+    return <button onClick={props.onClick} className = {` ${variantStyles[props.variant]} ${defaultStyles} ${sizeStyles[props.size]} ${props.fullWidth ? " w-19/20 flex justify-center" : " "} ${props.loading ? " opacity-70 border-BluePurple" : ""} ` } disabled = {props.loading} >
+        {props.startIcon && <div className="pr-2">{props.startIcon} </div>} 
+        {<div>{props.text}</div>} 
+        {props.endIcon && <div className="pl-2">{props.endIcon} </div>}
+    </button>
+}
+</file>
+
+<file path="brainlinks-fe/src/App.tsx">
+import Dashboard from './pages/Dashboard'
+import { Signin } from './pages/Signin'
+import { Signup } from './pages/Signup' 
+
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
+function App() {
+  return <>
+    <BrowserRouter>
+      <Routes>
+        <Route path = "/signup" element = {<Signup/>} />
+        <Route path = "/signin" element = {<Signin/>} />
+        <Route path = "/dashboard" element = {<Dashboard/>} />
+      </Routes>
+    </BrowserRouter>
+
+  </> 
+}
+
+export default App
+</file>
+
+</files>

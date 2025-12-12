@@ -1,5 +1,4 @@
 import mongoose, {model, Mongoose, Schema} from "mongoose"
-// mongoose.connect("mongodb+srv://aniketsingh2151:WoHozp69WVCRZffn@cluster0.f8dUp.mongodb.net/")
 
 
 const userSchema = new Schema({
