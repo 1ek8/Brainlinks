@@ -28,7 +28,6 @@ export const upsertToPinecone = async (
   try {
     const index = await getPineconeIndex();
     
-    // Verify embedding is 384 dimensions
     if (embedding.length !== 384) {
       throw new Error(`Expected 384-dimensional embedding, got ${embedding.length}`);
     }
@@ -43,9 +42,9 @@ export const upsertToPinecone = async (
         },
       },
     ]);
-    console.log(`✅ Upserted vector to Pinecone: ${contentId}`);
+    console.log(` Upserted vector to Pinecone: ${contentId}`);
   } catch (error) {
-    console.error(`❌ Error upserting to Pinecone: ${error}`);
+    console.error(` Error upserting to Pinecone: ${error}`);
     throw error;
   }
 };
