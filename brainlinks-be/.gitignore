@@ -15,3 +15,4 @@ yarn-error.log*
 build/
 coverage/
 .nyc_output/
+package-lock.json
