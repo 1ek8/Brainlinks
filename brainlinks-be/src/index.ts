@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import { JWT_PASSWORD } from "./config"
 import { hashgen } from "./hashgen"
 import { z } from "zod"
+import { initEmbeddingModel } from "./services/embeddings";
+import { upsertToPinecone } from "./config/pinecone";
 
 dotenv.config();
 
@@ -94,14 +96,34 @@ app.post("/api/v1/content", userMiddleware, async (req: Request,res: Response) =
     }
     const { link, title, type, textContent } = parsedData.data;
 
-    await ContentModel.create({
+    const newContent = await ContentModel.create({
         link,
         title,
         type,
+        textContent,
         //@ts-ignore
         userId: req.userId,
         tags: []
     })
+
+    try {
+        const getEmbedding = await initEmbeddingModel();
+
+        const textToEmbed = `${title} ${textContent || ""}`.trim(); 
+        
+        const output = await getEmbedding(textToEmbed, { pooling: 'mean', normalize: true });
+        const embeddingArray = Array.from(output.data) as number[];
+
+        await upsertToPinecone(
+            newContent._id.toString(), 
+            embeddingArray, 
+            //@ts-ignore
+            req.userId,
+            { title, type, link: link || "" }
+        );
+    } catch (error) {
+        console.error("Failed to vectorize:", error);
+    }
 
     res.json({
         message: "DB: Content Added in Database"
