@@ -7,6 +7,7 @@ import { hashgen } from "./hashgen"
 import { z } from "zod"
 import { initEmbeddingModel } from "./services/embeddings";
 import { upsertToPinecone } from "./config/pinecone";
+import { querySimilarVectors } from "./config/pinecone";
 
 dotenv.config();
 
@@ -141,6 +142,36 @@ app.get("/api/v1/content", userMiddleware, async (req:Request, res:Response)=> {
         content
     })
 })
+
+app.get("/api/v1/content/search", userMiddleware, async (req: Request, res: Response) => {
+    //@ts-ignore
+    const userId = req.userId;
+    const query = req.query.q as string;
+
+    if (!query) {
+        res.status(400).json({ message: "Search query required" });
+        return;
+    }
+
+    try {
+        const getEmbedding = await initEmbeddingModel();
+        const output = await getEmbedding(query, { pooling: 'mean', normalize: true });
+        const queryEmbedding = Array.from(output.data) as number[];
+
+        // Query Pinecone for top 5 matches
+        const searchResults = await querySimilarVectors(queryEmbedding, userId, 5);
+        
+        const matchedIds = searchResults.matches.map((match: any) => match.id);
+
+        const content = await ContentModel.find({
+            _id: { $in: matchedIds }
+        }).populate("userId", "username");
+
+        res.json({ content });
+    } catch (error) {
+        res.status(500).json({ message: "Semantic search failed" });
+    }
+});
 
 app.get("/api/v1/content/title", userMiddleware, async (req: Request, res: Response) => {
     //@ts-ignore
