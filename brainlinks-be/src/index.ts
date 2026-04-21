@@ -4,6 +4,7 @@ import mongoose from "mongoose"
 import dotenv from "dotenv";
 import { JWT_PASSWORD } from "./config"
 import { hashgen } from "./hashgen"
+import { z } from "zod"
 
 dotenv.config();
 
@@ -20,14 +21,29 @@ import { userMiddleware } from "./middleware"
 
 import cors from "cors";
 
+const signupSchema = z.object({
+    username: z.string().min(3).max(20),
+    password: z.string().min(6)
+});
+
+const contentSchema = z.object({
+    title: z.string().min(1),
+    link: z.url().optional().or(z.literal('')),
+    textContent: z.string().optional(),
+    type: z.enum(["youtube", "twitter", "text"])
+});
+
 const app = express();
 app.use(express.json())
 app.use(cors());
 
 app.post("/api/v1/signup", async (req: Request,res: Response) => {
-    //Zod pending
-    const username = req.body.username
-    const password = req.body.password
+    const parsedData = signupSchema.safeParse(req.body);
+    if (!parsedData.success) {
+        res.status(400).json({ message: "Invalid input", errors: parsedData.error });
+        return;
+    }
+    const { username, password } = parsedData.data;
     try{
         await UserModel.create({
             username,
@@ -44,8 +60,12 @@ app.post("/api/v1/signup", async (req: Request,res: Response) => {
 
 
 app.post("/api/v1/signin", async (req: Request,res: Response) =>  {
-    const username = req.body.username
-    const password = req.body.password
+    const parsedData = signupSchema.safeParse(req.body);
+    if (!parsedData.success) {
+        res.status(400).json({ message: "Invalid input", errors: parsedData.error });
+        return;
+    }
+    const { username, password } = parsedData.data;
     
     const existingUser = await UserModel.findOne({
         username,
@@ -67,9 +87,12 @@ app.post("/api/v1/signin", async (req: Request,res: Response) =>  {
 })
 
 app.post("/api/v1/content", userMiddleware, async (req: Request,res: Response) => {
-    const link = req.body.link;
-    const title = req.body.title;
-    const type = req.body.type;
+    const parsedData = contentSchema.safeParse(req.body);
+    if (!parsedData.success) {
+        res.status(400).json({ message: "Invalid inputs", errors: parsedData.error });
+        return;
+    }
+    const { link, title, type, textContent } = parsedData.data;
 
     await ContentModel.create({
         link,
