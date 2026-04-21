@@ -9,6 +9,7 @@ import { initEmbeddingModel } from "./services/embeddings";
 import { upsertToPinecone } from "./config/pinecone";
 import { querySimilarVectors } from "./config/pinecone";
 import { openRouter } from "./services/embeddings";
+import { processAndEmbedContent } from "./services/contentProcessor";
 
 dotenv.config();
 
@@ -107,27 +108,12 @@ app.post("/api/v1/content", userMiddleware, async (req: Request,res: Response) =
         tags: []
     })
 
-    try {
-        const getEmbedding = await initEmbeddingModel();
-
-        const textToEmbed = `${title} ${textContent || ""}`.trim(); 
-        
-        const output = await getEmbedding(textToEmbed, { pooling: 'mean', normalize: true });
-        const embeddingArray = Array.from(output.data) as number[];
-
-        await upsertToPinecone(
-            newContent._id.toString(), 
-            embeddingArray, 
-            //@ts-ignore
-            req.userId,
-            { title, type, link: link || "" }
-        );
-    } catch (error) {
-        console.error("Failed to vectorize:", error);
-    }
+    processAndEmbedContent(newContent).catch(err => {
+        console.error("Unhandled error in background processor:", err);
+    });
 
     res.json({
-        message: "DB: Content Added in Database"
+        message: "Content Added successfully. Context processing in the background." 
     })
 })
 
