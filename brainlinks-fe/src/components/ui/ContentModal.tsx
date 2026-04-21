@@ -6,6 +6,7 @@ import { Input } from "./InputBox";
 
 import { useRef, useState } from "react";
 import { BACKEND_URL } from "../../config";
+// import { text } from "stream/consumers";
 
 interface ModalProps {
     open: boolean;
@@ -14,7 +15,8 @@ interface ModalProps {
 
 enum ContentType {
     Youtube = "youtube",
-    Twitter = "twitter"
+    Twitter = "twitter",
+    Text = "text"
 }
 
 export function CreateContentModal({open, onClose}: ModalProps) {
@@ -24,22 +26,26 @@ export function CreateContentModal({open, onClose}: ModalProps) {
     const modalRef = useOutsideClick(onClose);
     const titleRef = useRef<HTMLInputElement>();
     const linkRef = useRef<HTMLInputElement>();
+    const textContentRef = useRef<HTMLTextAreaElement>(null);
     
     const [type, setType] = useState(ContentType.Youtube)
 
     async function addContent() {
         const title = titleRef.current?.value;
         const link = linkRef.current?.value;
+        const textContent = textContentRef.current?.value;
 
         await axios.post(BACKEND_URL + "/api/v1/content", {
             link,
             title,
-            type
+            type,
+            textContent
         }, {
             headers: {
                 "Authorization": localStorage.getItem("token")
             }
-        })
+        });
+        onClose();
     }
 
     return <div> 
@@ -53,11 +59,16 @@ export function CreateContentModal({open, onClose}: ModalProps) {
                         </div>
                         <div>
                             <Input reference = {titleRef} placeholder = "Title"/>
-                            <Input reference = {linkRef} placeholder = "Link"/>
+                            {type === ContentType.Text ? (
+                                <textarea ref={textContentRef} placeholder="Enter your note..." className="w-full p-2 border border-slate-200 rounded m-2" rows={4} />
+                            ) : (
+                                <Input reference={linkRef} placeholder="Link"/>
+                            )}
                         </div>
                         <div className="flex justify-center my-2 gap-3">
                             <Button size = "md" text = "Youtube" variant = {type === ContentType.Youtube ? "primary" : "secondary"} onClick={() => {setType(ContentType.Youtube)}} />
                             <Button size = "md" text = "Twitter" variant = {type === ContentType.Twitter ? "primary" : "secondary"} onClick={() => {setType(ContentType.Twitter)}} />
+                            <Button size = "md" text = "Text" variant = {type === ContentType.Text ? "primary" : "secondary"} onClick = {() => setType(ContentType.Text)} />
                         </div>
                         <div className="flex justify-center p-2">
                             <Button onClick = {addContent} size = "md" text = "Submit" variant = "primary" />

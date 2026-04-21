@@ -2,10 +2,10 @@ import express, {Request, Response} from "express"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
 import dotenv from "dotenv";
-dotenv.config();
-
 import { JWT_PASSWORD } from "./config"
 import { hashgen } from "./hashgen"
+
+dotenv.config();
 
 const MONGO_URL = process.env.MONGO_URL
 
@@ -19,7 +19,6 @@ import { ExitStatus } from "typescript"
 import { userMiddleware } from "./middleware"
 
 import cors from "cors";
-
 
 const app = express();
 app.use(express.json())
