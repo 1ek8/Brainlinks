@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../../config";
 
-export function SearchBar() {
+export function SearchBar({ onOpenChat }: { onOpenChat: (query: string) => void}) {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<any[]>([]);
     const [isOpen, setIsOpen] = useState(false);
@@ -41,9 +41,15 @@ export function SearchBar() {
             />
             
             {isOpen && query.length >= 3 && (
-                <div className="absolute top-full mt-1 w-full bg-white border shadow-lg rounded-md z-50">
-                    <div className="p-2 border-b text-sm text-gray-500 cursor-pointer hover:bg-gray-100">
-                        ✨ Answer using LLM (Coming Soon)
+                <div className="absolute top-full mt-1 w-full bg-white border shadow-lg rounded-md z-50 overflow-hidden">
+                    <div 
+                        className="p-3 border-b text-sm text-purple-600 font-medium cursor-pointer hover:bg-purple-50 flex items-center gap-2"
+                        onClick={() => {
+                            onOpenChat(query);
+                            setIsOpen(false);
+                        }}
+                    >
+                        ✨ Answer using LLM
                     </div>
                     {results.length > 0 ? results.map(item => (
                         <div key={item._id} className="p-3 border-b hover:bg-gray-50 cursor-pointer">
