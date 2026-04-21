@@ -8,6 +8,7 @@ import { z } from "zod"
 import { initEmbeddingModel } from "./services/embeddings";
 import { upsertToPinecone } from "./config/pinecone";
 import { querySimilarVectors } from "./config/pinecone";
+import { openRouter } from "./services/embeddings";
 
 dotenv.config();
 
@@ -60,7 +61,6 @@ app.post("/api/v1/signup", async (req: Request,res: Response) => {
         })
     }
 })
-
 
 app.post("/api/v1/signin", async (req: Request,res: Response) =>  {
     const parsedData = signupSchema.safeParse(req.body);
@@ -144,6 +144,7 @@ app.get("/api/v1/content", userMiddleware, async (req:Request, res:Response)=> {
 })
 
 app.get("/api/v1/content/search", userMiddleware, async (req: Request, res: Response) => {
+    
     //@ts-ignore
     const userId = req.userId;
     const query = req.query.q as string;
@@ -196,6 +197,54 @@ app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response
         userId: req.userId
     })
 })
+
+app.post("/api/v1/chat", userMiddleware, async (req: Request, res: Response) => {
+    const query = req.body.query as string;
+    //@ts-ignore
+    const userId = req.userId;
+
+    if (!query) {
+        res.status(400).json({ message: "Query is required" });
+        return;
+    }
+
+    try {
+        // 1. Embed user's question
+        const getEmbedding = await initEmbeddingModel();
+        const output = await getEmbedding(query, { pooling: 'mean', normalize: true });
+        const queryEmbedding = Array.from(output.data) as number[];
+
+        // 2. Query Pinecone for 5 most relevant documents
+        const searchResults = await querySimilarVectors(queryEmbedding, userId, 5);
+        const matchedIds = searchResults.matches.map((match: any) => match.id);
+
+        // 3. Fetch the full content from MongoDB
+        const content = await ContentModel.find({ _id: { $in: matchedIds } });
+
+        // 4. Construct the context string
+        const contextString = content.map(c => 
+            `Title: ${c.title}\nType: ${c.type}\nLink: ${c.link || 'N/A'}\nContent: ${c.textContent || 'N/A'}`
+        ).join("\n\n---\n\n");
+
+        // 5. Ask OpenRouter to answer using ONLY the context
+        const completion = await openRouter.chat.completions.create({
+            model: "meta-llama/llama-3-8b-instruct:free", // Free model for dev, can change later
+            messages: [
+                { 
+                    role: "system", 
+                    content: "You are an AI assistant for the 'Brainlinks' app. Answer the user's question using ONLY the provided context from their saved notes. If the answer is not in the context, say 'I cannot answer this based on your saved brainlinks.'\n\nContext:\n" + contextString 
+                },
+                { role: "user", content: query }
+            ]
+        });
+
+        res.json({ answer: completion.choices[0].message.content });
+
+    } catch (error) {
+        console.error("Chat error:", error);
+        res.status(500).json({ message: "Failed to generate answer" });
+    }
+});
 
 app.post("/api/v1/brain/share", userMiddleware, async (req: Request, res: Response) => {
     const share = req.body.share;
