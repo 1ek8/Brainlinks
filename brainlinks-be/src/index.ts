@@ -232,7 +232,7 @@ app.post("/api/v1/chat", userMiddleware, async (req: Request, res: Response) => 
             messages: [
                 { 
                     role: "system", 
-                    content: "You are an AI assistant for the 'Brainlinks' app. Answer the user's question using ONLY the provided context from their saved notes. If the answer is not in the context, say 'I cannot answer this based on your saved brainlinks.'\n\nContext:\n" + contextString 
+                    content: "You are an AI assistant for the 'Brainlinks' app. Answer the user's question using ONLY the provided context from their saved notes. If the answer is not in the context, say 'I cannot answer this based on your current brain state.'\n\nContext:\n" + contextString 
                 },
                 { role: "user", content: query }
             ]
