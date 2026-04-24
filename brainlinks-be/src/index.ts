@@ -2,14 +2,14 @@ import express, {Request, Response} from "express"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
 import dotenv from "dotenv";
-import { JWT_PASSWORD } from "./config"
-import { hashgen } from "./hashgen"
+import { JWT_PASSWORD } from "./config.js"
+import { hashgen } from "./hashgen.js"
 import { z } from "zod"
-import { initEmbeddingModel } from "./services/embeddings";
-import { upsertToPinecone } from "./config/pinecone";
-import { querySimilarVectors } from "./config/pinecone";
-import { openRouter } from "./services/embeddings";
-import { processAndEmbedContent } from "./services/contentProcessor";
+import { initEmbeddingModel } from "./services/embeddings.js";
+import { upsertToPinecone } from "./config/pinecone.js";
+import { querySimilarVectors } from "./config/pinecone.js";
+import { openRouter } from "./services/embeddings.js";
+import { processAndEmbedContent } from "./services/contentProcessor.js";
 
 dotenv.config();
 
@@ -20,9 +20,9 @@ if(!MONGO_URL) {
 }
 
 mongoose.connect(process.env.MONGO_URL!)
-import { ContentModel, UserModel, LinkModel } from "./db"
+import { ContentModel, UserModel, LinkModel } from "./db.js"
 import { ExitStatus } from "typescript"
-import { userMiddleware } from "./middleware"
+import { userMiddleware } from "./middleware.js"
 
 import cors from "cors";
 

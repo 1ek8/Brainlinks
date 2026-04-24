@@ -1,6 +1,6 @@
 import { pipeline } from "@xenova/transformers";
 import OpenAI from "openai";
-import { OPENROUTER_API_KEY } from "../config";
+import { OPENROUTER_API_KEY } from "../config.js";
 
 export const openRouter = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",

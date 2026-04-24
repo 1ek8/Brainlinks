@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { Jwt } from "jsonwebtoken"
 
-import { JWT_PASSWORD } from "./config";
+import { JWT_PASSWORD } from "./config.js";
 import { MiddlewareOptions } from "mongoose";
 
 export const userMiddleware = (req: Request, res: Response, next: NextFunction) => {

@@ -1,6 +1,6 @@
-import { initEmbeddingModel } from "./embeddings";
-import { upsertToPinecone } from "../config/pinecone";
-import { scrapeWebPage, getYoutubeTranscript, getTweetText } from "./scraper";
+import { initEmbeddingModel } from "./embeddings.js";
+import { upsertToPinecone } from "../config/pinecone.js";
+import { scrapeWebPage, getYoutubeTranscript, getTweetText } from "./scraper.js";
 
 export async function processAndEmbedContent(contentDoc: any) {
     try {

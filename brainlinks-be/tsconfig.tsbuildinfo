@@ -1,1 +1,1 @@
-{"root":["./src/config.ts","./src/db.ts","./src/hashgen.ts","./src/index.ts","./src/middleware.ts"],"version":"5.7.3"}
+{"root":["./src/config.ts","./src/db.ts","./src/hashgen.ts","./src/index.ts","./src/middleware.ts","./src/config/pinecone.ts","./src/services/contentprocessor.ts","./src/services/embeddings.ts","./src/services/scraper.ts"],"version":"5.7.3"}

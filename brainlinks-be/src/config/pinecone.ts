@@ -1,5 +1,5 @@
 import { Pinecone } from "@pinecone-database/pinecone";
-import { PINECONE_INDEX } from "../config";
+import { PINECONE_INDEX } from "../config.js";
 
 const pinecone = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY || ""
