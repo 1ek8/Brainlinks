@@ -9,5 +9,5 @@ export function hashgen(len: number){
         ans += hashPool[Math.floor(Math.random() * poolLength)]
     }
 
-
+    return ans;
 }

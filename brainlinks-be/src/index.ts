@@ -2,7 +2,7 @@ import express, {Request, Response} from "express"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
 import dotenv from "dotenv";
-import { JWT_PASSWORD } from "./config.js"
+import { JWT_PASSWORD, PORT } from "./config.js"
 import { hashgen } from "./hashgen.js"
 import { z } from "zod"
 import { initEmbeddingModel } from "./services/embeddings.js";
@@ -38,9 +38,14 @@ const contentSchema = z.object({
     type: z.enum(["youtube", "twitter", "text"])
 });
 
+const FRONTEND_URL = process.env.FRONTEND_URL || "*";
+
 const app = express();
 app.use(express.json())
-app.use(cors());
+app.use(cors({
+    origin: FRONTEND_URL === "*" ? "*" : FRONTEND_URL.split(","),
+    credentials: true
+}));
 
 app.post("/api/v1/signup", async (req: Request,res: Response) => {
     const parsedData = signupSchema.safeParse(req.body);
@@ -272,7 +277,7 @@ app.post("/api/v1/brain/share", userMiddleware, async (req: Request, res: Respon
     
 })
 
-app.get("api/v1/brain/:shareLink", async (req: Request, res: Response) => {
+app.get("/api/v1/brain/:shareLink", async (req: Request, res: Response) => {
     const hash = req.params.shareLink;
 
     const link = await LinkModel.findOne({
@@ -311,4 +316,6 @@ app.get("api/v1/brain/:shareLink", async (req: Request, res: Response) => {
 })
 
 
-app.listen(3000);   
+app.listen(Number(PORT), () => {
+    console.log(`Server running on port ${PORT}`);
+});   
