@@ -2,3 +2,9 @@ node_modules
 dist
 
 .env
+
+# Personal deployment notes (not to be uploaded)
+deployment.md
+
+# direnv (per-dir gcloud project)
+.envrc

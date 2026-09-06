@@ -17,7 +17,7 @@ export function SearchBar({ onOpenChat }: { onOpenChat: (query: string) => void}
                 const res = await axios.get(`${BACKEND_URL}/api/v1/content/search?q=${query}`, {
                     headers: { "Authorization": localStorage.getItem("token") }
                 });
-                setResults(res.data.content || []);
+                setResults(res.data || []);
                 setIsOpen(true);
             } catch (e) {
                 console.error("Search failed");

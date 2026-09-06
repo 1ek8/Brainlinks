@@ -61,9 +61,16 @@ app.post("/api/v1/signup", async (req: Request,res: Response) => {
         })
 
         res.json("User Signed up")
-    }catch(e){
-        res.status(411).json({
-            "message": e
+    }catch(e: any){
+        if (e && e.code === 11000) {
+            res.status(409).json({
+                message: "Username already taken"
+            })
+            return;
+        }
+        console.error("Signup error:", e)
+        res.status(500).json({
+            "message": "An unexpected error occurred. Please try again."
         })
     }
 })

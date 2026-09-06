@@ -34,7 +34,7 @@ export function Dashboard() {
             </div>
           </div>
 
-        <div className='flex justify-end gap-4'>
+        {/* <div className='flex justify-end gap-4'>
           <Button
             onClick={() => setModalOpen(true)} 
             startIcon = {<PlusIcon size = "md" />}  
@@ -49,7 +49,7 @@ export function Dashboard() {
             variant="secondary" 
             text="Share"
           />
-        </div>
+        </div> */}
         
         <div className='flex gap-4'>
         {contents.map(({ type, link, title }) => <Card
@@ -58,7 +58,7 @@ export function Dashboard() {
             link={link}
           />)}
 
-          {JSON.stringify(contents)}
+          {/* {JSON.stringify(contents)} */}
           <Card title="video" type='youtube' link='https://youtu.be/yxDpF3XqpV4?si=VSQHcoLeVORPlsoj'  />
           <Card title="tweet" type='twitter' link='https://x.com/gunk4188/status/1892850342095708515'  />
         </div>

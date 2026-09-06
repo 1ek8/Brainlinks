@@ -7,7 +7,7 @@ export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "";
 export const PINECONE_API_KEY = process.env.PINECONE_API_KEY || "";
 export const PINECONE_INDEX = process.env.PINECONE_INDEX || "brainlinks";
 export const PINECONE_HOST = process.env.PINECONE_HOST || "";
-export const PORT = process.env.PORT || 3000;
+export const PORT = process.env.PORT || 3005;
 export const NODE_ENV = process.env.NODE_ENV || "development";
 
 

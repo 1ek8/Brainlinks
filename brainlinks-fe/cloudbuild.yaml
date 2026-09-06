@@ -1,0 +1,5 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'asia-south1-docker.pkg.dev/brainlinks-app-1ek8/brainlinks/fe:latest', '--build-arg', 'VITE_BACKEND_URL=${_BACKEND_URL}', '.']
+images:
+  - 'asia-south1-docker.pkg.dev/brainlinks-app-1ek8/brainlinks/fe:latest'
