@@ -1,3 +1,6 @@
+substitutions:
+  _BACKEND_URL: 'https://brainlinks-be-bsdbt336pa-el.a.run.app'
+
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'asia-south1-docker.pkg.dev/$PROJECT_ID/brainlinks/fe:latest', '--build-arg', 'VITE_BACKEND_URL=${_BACKEND_URL}', '.']

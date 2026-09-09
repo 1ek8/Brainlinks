@@ -1,0 +1,16 @@
+# Cloud Build trigger: deploy frontend on push to main
+# Create via:
+#   gcloud builds triggers create github \
+#     --name=fe-deploy \
+#     --repository=projects/brainlinks-app-1ek8/locations/asia-south1/connections/brainlinks-github/repositories/brainlinks \
+#     --branch-pattern="^main$" \
+#     --included-files="brainlinks-fe/**" \
+#     --build-config=brainlinks-fe/cloudbuild.yaml \
+#     --region=asia-south1
+name: fe-deploy
+description: Deploy brainlinks frontend on push to main
+repositoryEventConfig:
+  repository: projects/brainlinks-app-1ek8/locations/asia-south1/connections/brainlinks-github/repositories/brainlinks
+  push:
+    branch: '^main$'
+filename: brainlinks-fe/cloudbuild.yaml

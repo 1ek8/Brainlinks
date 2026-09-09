@@ -1,0 +1,16 @@
+# Cloud Build trigger: deploy backend on push to main
+# Create via:
+#   gcloud builds triggers create github \
+#     --name=be-deploy \
+#     --repository=projects/brainlinks-app-1ek8/locations/asia-south1/connections/brainlinks-github/repositories/brainlinks \
+#     --branch-pattern="^main$" \
+#     --included-files="brainlinks-be/**" \
+#     --build-config=brainlinks-be/cloudbuild.yaml \
+#     --region=asia-south1
+name: be-deploy
+description: Deploy brainlinks backend on push to main
+repositoryEventConfig:
+  repository: projects/brainlinks-app-1ek8/locations/asia-south1/connections/brainlinks-github/repositories/brainlinks
+  push:
+    branch: '^main$'
+filename: brainlinks-be/cloudbuild.yaml
