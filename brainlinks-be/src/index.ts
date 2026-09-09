@@ -1,12 +1,13 @@
 import express, {Request, Response} from "express"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
+import bcrypt from "bcryptjs"
+import rateLimit, { ipKeyGenerator } from "express-rate-limit"
 import dotenv from "dotenv";
 import { JWT_PASSWORD, PORT } from "./config.js"
 import { hashgen } from "./hashgen.js"
 import { z } from "zod"
 import { initEmbeddingModel } from "./services/embeddings.js";
-import { upsertToPinecone } from "./config/pinecone.js";
 import { querySimilarVectors } from "./config/pinecone.js";
 import { deleteFromPinecone } from "./config/pinecone.js";
 import { openRouter } from "./services/embeddings.js";
@@ -22,7 +23,6 @@ if(!MONGO_URL) {
 
 mongoose.connect(process.env.MONGO_URL!)
 import { ContentModel, UserModel, LinkModel } from "./db.js"
-import { ExitStatus } from "typescript"
 import { userMiddleware } from "./middleware.js"
 
 import cors from "cors";
@@ -39,6 +39,28 @@ const contentSchema = z.object({
     type: z.enum(["youtube", "twitter", "text"])
 });
 
+// Generic limiter for auth endpoints (brute-force protection)
+const authLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    limit: 20,           // max 20 requests/minute per IP
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Too many authentication attempts. Please slow down." }
+});
+
+// Chat hits a paid external LLM (OpenRouter), so limit harder to avoid token burnout.
+// Keyed by the authenticated userId so one user can't drain the quota via the API.
+const chatLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 10, // max 10 chat requests/minute per user
+    keyGenerator: (req: Request) => {
+        return (req as any).userId?.toString() || ipKeyGenerator(req.ip || "");
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Too many chat requests. Please wait a moment and try again." }
+});
+
 const FRONTEND_URL = process.env.FRONTEND_URL || "*";
 
 const app = express();
@@ -48,17 +70,18 @@ app.use(cors({
     credentials: true
 }));
 
-app.post("/api/v1/signup", async (req: Request,res: Response) => {
+app.post("/api/v1/signup", authLimiter, async (req: Request,res: Response) => {
     const parsedData = signupSchema.safeParse(req.body);
     if (!parsedData.success) {
         res.status(400).json({ message: "Invalid input", errors: parsedData.error });
         return;
     }
     const { username, password } = parsedData.data;
+    const hashedPassword = await bcrypt.hash(password, 10);
     try{
         await UserModel.create({
             username,
-            password
+            password: hashedPassword
         })
 
         res.json("User Signed up")
@@ -76,7 +99,7 @@ app.post("/api/v1/signup", async (req: Request,res: Response) => {
     }
 })
 
-app.post("/api/v1/signin", async (req: Request,res: Response) =>  {
+app.post("/api/v1/signin", authLimiter, async (req: Request,res: Response) =>  {
     const parsedData = signupSchema.safeParse(req.body);
     if (!parsedData.success) {
         res.status(400).json({ message: "Invalid input", errors: parsedData.error });
@@ -85,11 +108,28 @@ app.post("/api/v1/signin", async (req: Request,res: Response) =>  {
     const { username, password } = parsedData.data;
     
     const existingUser = await UserModel.findOne({
-        username,
-        password
+        username
     })
 
-    if(existingUser){
+    const storedPassword = existingUser?.password;
+    const isBcrypt = !!storedPassword && storedPassword.startsWith("$2");
+
+    let passwordMatches: boolean;
+    if (!existingUser || !storedPassword) {
+        passwordMatches = false;
+    } else if (isBcrypt) {
+        passwordMatches = await bcrypt.compare(password, storedPassword);
+    } else {
+        // Legacy plaintext password — compare directly, then upgrade to a hash
+        // on success so the stored credential is hashed from now on.
+        passwordMatches = password === storedPassword;
+        if (passwordMatches) {
+            existingUser.password = await bcrypt.hash(password, 10);
+            await existingUser.save();
+        }
+    }
+
+    if(existingUser && passwordMatches){
         const token = jwt.sign({
             id: existingUser._id
         }, JWT_PASSWORD)
@@ -176,12 +216,21 @@ app.get("/api/v1/content/search", userMiddleware, async (req: Request, res: Resp
 app.get("/api/v1/content/title", userMiddleware, async (req: Request, res: Response) => {
     //@ts-ignore
     const userId = req.userId;
-    const searchValue = req.query.searchValue;
+    const searchValue = req.query.searchValue as string;
+
+    if (!searchValue) {
+        res.status(400).json({ message: "searchValue query param is required" });
+        return;
+    }
+
+    // Escape regex metacharacters so user input can't break/inject the query
+    const escaped = searchValue.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
     const content = await ContentModel.find({
         userId,
-        link: {
-            $regex: searchValue
+        title: {
+            $regex: escaped,
+            $options: "i" // case-insensitive substring match on the title
         }
     }).populate("userId", "username")
     res.json({content})
@@ -210,7 +259,7 @@ app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response
     res.json({ message: "Content deleted" });
 })
 
-app.post("/api/v1/chat", userMiddleware, async (req: Request, res: Response) => {
+app.post("/api/v1/chat", userMiddleware, chatLimiter, async (req: Request, res: Response) => {
     const query = req.body.query as string;
     //@ts-ignore
     const userId = req.userId;
@@ -240,8 +289,9 @@ app.post("/api/v1/chat", userMiddleware, async (req: Request, res: Response) => 
 
         // 5. Ask OpenRouter to answer using ONLY the context
         const MODELS = [
-            "minimax/minimax-m3:free",
-            "google/gemma-4-26b-a4b-it:free"
+            "nvidia/nemotron-3-super-120b-a12b:free",
+            "google/gemma-4-26b-a4b-it:free",
+            "google/gemma-4-31b-it:free"
         ];
         let answer: string | null = null;
         let lastError: any = null;
