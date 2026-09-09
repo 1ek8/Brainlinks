@@ -3,6 +3,8 @@ dist
 
 .env
 
+.DS_Store
+
 # Personal deployment notes (not to be uploaded)
 deployment.md
 

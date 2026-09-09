@@ -1,5 +1,17 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'asia-south1-docker.pkg.dev/brainlinks-app-1ek8/brainlinks/fe:latest', '--build-arg', 'VITE_BACKEND_URL=${_BACKEND_URL}', '.']
+    args: ['build', '-t', 'asia-south1-docker.pkg.dev/$PROJECT_ID/brainlinks/fe:latest', '--build-arg', 'VITE_BACKEND_URL=${_BACKEND_URL}', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'asia-south1-docker.pkg.dev/$PROJECT_ID/brainlinks/fe:latest']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'brainlinks-fe'
+      - '--image=asia-south1-docker.pkg.dev/$PROJECT_ID/brainlinks/fe:latest'
+      - '--region=asia-south1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
 images:
-  - 'asia-south1-docker.pkg.dev/brainlinks-app-1ek8/brainlinks/fe:latest'
+  - 'asia-south1-docker.pkg.dev/$PROJECT_ID/brainlinks/fe:latest'

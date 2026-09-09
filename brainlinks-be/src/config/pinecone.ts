@@ -49,6 +49,17 @@ export const upsertToPinecone = async (
   }
 };
 
+export const deleteFromPinecone = async (contentId: string) => {
+  try {
+    const index = await getPineconeIndex();
+    await index.deleteOne(contentId);
+    console.log(` Deleted vector from Pinecone: ${contentId}`);
+  } catch (error) {
+    console.error(` Error deleting from Pinecone: ${error}`);
+    throw error;
+  }
+};
+
 export const querySimilarVectors = async (
   embedding: number[],
   userId: string,

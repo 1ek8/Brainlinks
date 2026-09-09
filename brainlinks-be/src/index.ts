@@ -8,6 +8,7 @@ import { z } from "zod"
 import { initEmbeddingModel } from "./services/embeddings.js";
 import { upsertToPinecone } from "./config/pinecone.js";
 import { querySimilarVectors } from "./config/pinecone.js";
+import { deleteFromPinecone } from "./config/pinecone.js";
 import { openRouter } from "./services/embeddings.js";
 import { processAndEmbedContent } from "./services/contentProcessor.js";
 
@@ -189,11 +190,24 @@ app.get("/api/v1/content/title", userMiddleware, async (req: Request, res: Respo
 app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response) => {
     const contentId = req.body.contentId;
 
-    await ContentModel.deleteOne({
-        contentId,
+    if (!contentId) {
+        res.status(400).json({ message: "contentId is required" });
+        return;
+    }
+
+    const result = await ContentModel.deleteOne({
+        _id: contentId,
         //@ts-ignore
         userId: req.userId
-    })
+    });
+
+    if (result.deletedCount > 0) {
+        deleteFromPinecone(contentId).catch(err =>
+            console.error("Unhandled error deleting from Pinecone:", err)
+        );
+    }
+
+    res.json({ message: "Content deleted" });
 })
 
 app.post("/api/v1/chat", userMiddleware, async (req: Request, res: Response) => {
@@ -225,18 +239,36 @@ app.post("/api/v1/chat", userMiddleware, async (req: Request, res: Response) => 
         ).join("\n\n---\n\n");
 
         // 5. Ask OpenRouter to answer using ONLY the context
-        const completion = await openRouter.chat.completions.create({
-            model: "meta-llama/llama-3-8b-instruct:free", // Free model for dev, can change later
-            messages: [
-                { 
-                    role: "system", 
-                    content: "You are an AI assistant for the 'Brainlinks' app. Answer the user's question using ONLY the provided context from their saved notes. If the answer is not in the context, say 'I cannot answer this based on your current brain state.'\n\nContext:\n" + contextString 
-                },
-                { role: "user", content: query }
-            ]
-        });
+        const MODELS = [
+            "minimax/minimax-m3:free",
+            "google/gemma-4-26b-a4b-it:free"
+        ];
+        let answer: string | null = null;
+        let lastError: any = null;
+        for (const model of MODELS) {
+            try {
+                const completion = await openRouter.chat.completions.create({
+                    model,
+                    messages: [
+                        { 
+                            role: "system", 
+                            content: "You are an AI assistant for the 'Brainlinks' app. Answer the user's question using ONLY the provided context from their saved notes. If the answer is not in the context, say 'I cannot answer this based on your current brain state.'\n\nContext:\n" + contextString 
+                        },
+                        { role: "user", content: query }
+                    ]
+                });
+                answer = completion.choices[0].message.content;
+                break;
+            } catch (e: any) {
+                lastError = e;
+                console.error(`Chat model ${model} failed:`, e.error || e.message);
+            }
+        }
+        if (!answer) {
+            throw lastError || new Error("All models failed");
+        }
 
-        res.json({ answer: completion.choices[0].message.content });
+        res.json({ answer });
 
     } catch (error) {
         console.error("Chat error:", error);

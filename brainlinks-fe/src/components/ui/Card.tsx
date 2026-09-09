@@ -1,12 +1,14 @@
 import { PlusIcon } from "../../icons/Plusicon"
 import { ShareIcon } from "../../icons/Shareicon"
+import { CrossIcon } from "../../icons/CrossIcon"
 import EmbeddedTweet from "./Tweet"
 
 interface CardProps {
     title: string,
     link?   : string,
     type: "twitter" | "youtube" | "text",
-    textContent?: string
+    textContent?: string,
+    onDelete?: () => void
 }
 
 function convertToEmbedUrl (youtubeUrl: string)  {
@@ -15,7 +17,7 @@ function convertToEmbedUrl (youtubeUrl: string)  {
 }
 
 
-export const Card = ({title, link, type, textContent}: CardProps) => {
+export const Card = ({title, link, type, textContent, onDelete}: CardProps) => {
     return <div> 
         <span  className="p-4 bg-white rounded-md shadow-md border-slate-200 border-1 block max-w-96 min-h-60 min-w-72">
             <div className = "flex justify-between">
@@ -26,6 +28,9 @@ export const Card = ({title, link, type, textContent}: CardProps) => {
                 </div>
                 <div className = "flex items-center">
                     <div className = "p-2 text-gray-600"><PlusIcon size = "lg"/></div>
+                    {onDelete && <div onClick={onDelete} className = "p-2 text-gray-600 hover:text-red-500 cursor-pointer">
+                        <CrossIcon />
+                    </div>}
                     <div className = "p-2 text-gray-600">
                         <a href = {link} target = "_blank">
                             <ShareIcon size = "md"/>

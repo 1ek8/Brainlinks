@@ -1,50 +1,33 @@
-# React + TypeScript + Vite
+# Brainlinks — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite + TypeScript + Tailwind SPA for **Brainlinks** (see the [root README](../README.md) for the full project).
 
-Currently, two official plugins are available:
+## Pages
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Route | Component | Purpose |
+|---|---|---|
+| `/signup` | `Signup.tsx` | Create account |
+| `/signin` | `Signin.tsx` | Login, stores JWT in `localStorage.token` |
+| `/dashboard` | `Dashboard.tsx` | Card grid, add content, search + chat, share |
+| `/brain/:hash` | `SharedBrain.tsx` | Public read-only view of a shared brain (**no auth**) |
 
-## Expanding the ESLint configuration
+## Highlights
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **`config.ts`** — exports `BACKEND_URL` from `VITE_BACKEND_URL`, defaulting to `http://localhost:3005`. It is **baked in at build time**: any backend URL change requires a rebuild + redeploy.
+- **`hooks/useContent.tsx`** — fetches `/api/v1/content` once on mount and exposes `refresh()`. The dashboard calls `refresh()` after add/delete so the grid always matches the backend without a manual reload.
+- **`components/ui/SearchBar.tsx`** — debounced query to `/api/v1/content/search`, reads `res.data?.content`, and offers an "Answer using LLM" option that opens the chat modal.
+- **`components/ui/ShareModal.tsx`** — creates/reuses the share hash via `POST /api/v1/brain/share` and shows the copyable `${origin}/brain/<hash>` link; can also disable sharing.
+- **`components/ui/Card.tsx`** — renders by `type`: YouTube → embed iframe, Twitter → `EmbeddedTweet`, text → the note body (`textContent`); optional `onDelete` shows the delete action.
 
-- Configure the top-level `parserOptions` property like this:
+## Auth convention
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+`localStorage.getItem("token")` is sent as the raw `Authorization` header (the backend verifies the bare token, no `Bearer` prefix).
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Scripts
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm run dev      # vite dev server
+npm run build    # tsc -b && vite build (typecheck + production bundle)
+npm run lint     # eslint
+npm run preview  # serve the production build
 ```

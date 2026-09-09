@@ -11,6 +11,7 @@ import { BACKEND_URL } from "../../config";
 interface ModalProps {
     open: boolean;
     onClose: () => void;
+    onAdded?: () => void;
 }
 
 enum ContentType {
@@ -19,7 +20,7 @@ enum ContentType {
     Text = "text"
 }
 
-export function CreateContentModal({open, onClose}: ModalProps) {
+export function CreateContentModal({open, onClose, onAdded}: ModalProps) {
     // const [modalOpen, setModalOpen] = useState(false); 
     // for self-managed (uncontrolled component)
 
@@ -46,6 +47,7 @@ export function CreateContentModal({open, onClose}: ModalProps) {
             }
         });
         onClose();
+        onAdded?.();
     }
 
     return <div> 
