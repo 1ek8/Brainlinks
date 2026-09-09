@@ -2,7 +2,7 @@ import express, {Request, Response} from "express"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
 import bcrypt from "bcryptjs"
-import rateLimit, { ipKeyGenerator } from "express-rate-limit"
+import rateLimit from "express-rate-limit"
 import dotenv from "dotenv";
 import { JWT_PASSWORD, PORT } from "./config.js"
 import { hashgen } from "./hashgen.js"
@@ -39,12 +39,22 @@ const contentSchema = z.object({
     type: z.enum(["youtube", "twitter", "text"])
 });
 
+// Client IP in front of Cloudflare: the worker keeps X-Forwarded-For intact, and
+// Cloudflare always sets the first entry to the real client IP. Fall back to the
+// socket address for direct requests (no proxy) so callers can't spoof the key.
+const clientIp = (req: Request): string => {
+    const xff = req.headers["x-forwarded-for"];
+    const first = (Array.isArray(xff) ? xff[0] : xff?.split(",")[0] ?? "").trim();
+    return first || req.socket?.remoteAddress || "";
+};
+
 // Generic limiter for auth endpoints (brute-force protection)
 const authLimiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
     limit: 20,           // max 20 requests/minute per IP
     standardHeaders: true,
     legacyHeaders: false,
+    keyGenerator: (req: Request) => clientIp(req),
     message: { message: "Too many authentication attempts. Please slow down." }
 });
 
@@ -54,7 +64,7 @@ const chatLimiter = rateLimit({
     windowMs: 60 * 1000,
     limit: 10, // max 10 chat requests/minute per user
     keyGenerator: (req: Request) => {
-        return (req as any).userId?.toString() || ipKeyGenerator(req.ip || "");
+        return (req as any).userId?.toString() || clientIp(req);
     },
     standardHeaders: true,
     legacyHeaders: false,
@@ -64,7 +74,6 @@ const chatLimiter = rateLimit({
 const FRONTEND_URL = process.env.FRONTEND_URL || "*";
 
 const app = express();
-app.set("trust proxy", true);
 app.use(express.json())
 app.use(cors({
     origin: FRONTEND_URL === "*" ? "*" : FRONTEND_URL.split(","),
