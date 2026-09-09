@@ -1,5 +1,5 @@
 substitutions:
-  _BACKEND_URL: 'https://brainlinks-be-bsdbt336pa-el.a.run.app'
+  _BACKEND_URL: 'https://api-brainlinks.byaniket.site'
 
 steps:
   - name: 'gcr.io/cloud-builders/docker'
