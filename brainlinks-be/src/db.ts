@@ -15,9 +15,7 @@ const contentSchema = new Schema ({
     link: { type: String, required: false},
     textContent: { type:String, required: false},
     type: String,
-    tags: [{type: mongoose.Types.ObjectId, ref: 'Tag'}],
-    userId: {type: mongoose.Types.ObjectId, ref: 'User', required: true},
-    share: { type: Boolean, required: false}
+    userId: {type: mongoose.Types.ObjectId, ref: 'User', required: true}
 })
 
 export const ContentModel = model("Content", contentSchema)

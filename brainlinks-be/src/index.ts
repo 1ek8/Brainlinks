@@ -71,6 +71,10 @@ app.use(cors({
     credentials: true
 }));
 
+app.get("/", (req: Request, res: Response) => {
+    res.json({ status: "ok" })
+});
+
 app.post("/api/v1/signup", authLimiter, async (req: Request,res: Response) => {
     const parsedData = signupSchema.safeParse(req.body);
     if (!parsedData.success) {
@@ -158,8 +162,7 @@ app.post("/api/v1/content", userMiddleware, async (req: Request,res: Response) =
         type,
         textContent,
         //@ts-ignore
-        userId: req.userId,
-        tags: []
+        userId: req.userId
     })
 
     processAndEmbedContent(newContent).catch(err => {
@@ -380,7 +383,7 @@ app.get("/api/v1/brain/:shareLink", async (req: Request, res: Response) => {
     })
 
     if(!link){
-        res.status(411).json({
+        res.status(404).json({
             message: "The shareable link in the URL doesnt exist or has expired!"
         })
     return;
@@ -390,14 +393,12 @@ app.get("/api/v1/brain/:shareLink", async (req: Request, res: Response) => {
         userId: link.userId    
     })
 
-    console.log(link)
-
     const user = await UserModel.findOne({
         _id: link.userId
     })
 
     if(!user){
-        res.status(411).json({
+        res.status(404).json({
             message: "Link and its corresponding content is validated, however userId stored in these databases is not validated in the User Database"
         })
 
