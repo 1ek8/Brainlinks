@@ -3,8 +3,16 @@ import { useEffect } from "react";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
 
+export interface Content {
+    _id: string;
+    title: string;
+    type: "twitter" | "youtube" | "text";
+    link?: string;
+    textContent?: string;
+}
+
 export function useContent() {
-    const [contents, setContents] = useState([]);
+    const [contents, setContents] = useState<Content[]>([]);
     const [loading, setLoading] = useState(true);
 
     async function refresh() {

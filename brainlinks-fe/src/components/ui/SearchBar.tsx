@@ -2,9 +2,15 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../../config";
 
-export function SearchBar({ onOpenChat }: { onOpenChat: (query: string) => void}) {
+interface SearchResult {
+    _id: string;
+    title: string;
+    type: string;
+}
+
+export function SearchBar({ onOpenChat, onSelectResult }: { onOpenChat: (query: string) => void, onSelectResult?: (id: string) => void }) {
     const [query, setQuery] = useState("");
-    const [results, setResults] = useState<any[]>([]);
+    const [results, setResults] = useState<SearchResult[]>([]);
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
@@ -19,7 +25,7 @@ export function SearchBar({ onOpenChat }: { onOpenChat: (query: string) => void}
                 });
                 setResults(res.data?.content || []);
                 setIsOpen(true);
-            } catch (e) {
+            } catch {
                 console.error("Search failed");
             }
         };
@@ -52,7 +58,10 @@ export function SearchBar({ onOpenChat }: { onOpenChat: (query: string) => void}
                         ✨ Answer using LLM
                     </div>
                     {results.length > 0 ? results.map(item => (
-                        <div key={item._id} className="p-3 border-b hover:bg-gray-50 cursor-pointer">
+                        <div key={item._id} className="p-3 border-b hover:bg-gray-50 cursor-pointer" onClick={() => {
+                            onSelectResult?.(item._id);
+                            setIsOpen(false);
+                        }}>
                             <p className="font-medium text-sm">{item.title}</p>
                             <span className="text-xs text-gray-400">{item.type}</span>
                         </div>

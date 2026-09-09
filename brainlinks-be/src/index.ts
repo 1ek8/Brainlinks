@@ -244,6 +244,11 @@ app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response
         return;
     }
 
+    if (!mongoose.Types.ObjectId.isValid(contentId)) {
+        res.status(400).json({ message: "Invalid contentId" });
+        return;
+    }
+
     const result = await ContentModel.deleteOne({
         _id: contentId,
         //@ts-ignore

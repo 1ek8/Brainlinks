@@ -10,8 +10,8 @@ export function Signup() {
 
     const navigate = useNavigate();
 
-    const usernameRef = useRef<HTMLInputElement>();
-    const passwordRef = useRef<HTMLInputElement>();
+    const usernameRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
 
     async function signup() {
         const username = usernameRef.current?.value;
@@ -22,8 +22,8 @@ export function Signup() {
                 password
             })
             navigate("/signin");
-        } catch (error: any) {
-            const message = error?.response?.data?.message;
+        } catch (error) {
+            const message = axios.isAxiosError(error) ? error.response?.data?.message : undefined;
             alert(message || "Signup failed. Please try again.");
         }
 }

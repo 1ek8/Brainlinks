@@ -4,7 +4,7 @@ import { PlusIcon } from '../icons/Plusicon'
 import { ShareIcon } from '../icons/Shareicon'
 import { Card } from '../components/ui/Card'
 import { CreateContentModal } from '../components/ui/ContentModal'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Sidebar } from '../components/ui/Sidebar'
 import { useContent } from '../hooks/useContent'
 import { SearchBar } from "../components/ui/SearchBar";
@@ -17,7 +17,20 @@ export function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [chatQuery, setChatQuery] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string | null>(null);
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
   const { contents, refresh } = useContent();
+
+  const filteredContents = filter ? contents.filter((c) => c.type === filter) : contents;
+
+  useEffect(() => {
+    if (!highlightedId) return;
+    const el = document.getElementById(`card-${highlightedId}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    const timeoutId = setTimeout(() => setHighlightedId(null), 3000);
+    return () => clearTimeout(timeoutId);
+  }, [highlightedId]);
 
   async function deleteContent(id: string) {
     if (!window.confirm("Delete this note?")) return;
@@ -36,7 +49,7 @@ export function Dashboard() {
 
   return ( 
     <>
-      <Sidebar/>
+      <Sidebar activeType={filter} onSelectType={setFilter} />
       <div className='p-3 ml-60 min-h-screen bg-gray-100'>
         <CreateContentModal open = {modalOpen} onClose={() => { setModalOpen(false)}} onAdded={refresh} />
 
@@ -47,7 +60,7 @@ export function Dashboard() {
         {shareOpen && <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} />}
 
         <div className="flex justify-between items-center mb-6">
-            <SearchBar onOpenChat={(query) => setChatQuery(query)} />
+            <SearchBar onOpenChat={(query) => setChatQuery(query)} onSelectResult={(id) => setHighlightedId(id)} />
             
             <div className="flex justify-end gap-4">
                 <Button onClick={() => setModalOpen(true)} startIcon={<PlusIcon size="md" />} size="md" variant="primary" text="Add Content" />
@@ -56,15 +69,17 @@ export function Dashboard() {
           </div>
 
         <div className='flex flex-wrap gap-4'>
-          {contents.length === 0 ? (
-            <div className="p-4 text-gray-500">No notes yet. Click "Add Content" to get started.</div>
+          {filteredContents.length === 0 ? (
+            <div className="p-4 text-gray-500">{filter ? `No ${filter} notes yet.` : 'No notes yet. Click "Add Content" to get started.'}</div>
           ) : (
-            contents.map(({ _id, type, link, title, textContent }) => <Card
+            filteredContents.map(({ _id, type, link, title, textContent }) => <Card
               key={_id}
+              id={`card-${_id}`}
               title={title}
               type={type}
               link={link}
               textContent={textContent}
+              highlighted={highlightedId === _id}
               onDelete={() => deleteContent(_id)}
             />)
           )}

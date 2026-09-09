@@ -1,7 +1,8 @@
+import { LegacyRef } from "react";
+
 interface InputProps {
     placeholder: string;
-    // onChange?: () => void;
-    reference: any;
+    reference: LegacyRef<HTMLInputElement>;
 }
 
 export function Input ({reference, placeholder}: InputProps) {

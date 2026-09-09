@@ -1,30 +1,38 @@
 import { useEffect, useRef } from "react";
-//useState
 
 interface TweetProps{
     link: string;
 }
 
+interface TwttrWidgets {
+    createTweet: (id: string, container: HTMLElement) => void;
+}
+
+interface Twttr {
+    widgets?: TwttrWidgets;
+}
+
+declare global {
+    interface Window {
+        twttr?: Twttr;
+    }
+}
+
 const EmbeddedTweet = (props: TweetProps) => {
     const tweetContainerRef = useRef<HTMLDivElement>(null);
-    // const [isTweetLoaded, setIsTweetLoaded] = useState(false);
     
     const parts = props.link.split("/");
     const tweetID = parts[parts.length - 1];
 
     useEffect(() => {
-        if ((window as any).twttr && (window as any).twttr.widgets && tweetContainerRef.current) {
+        if (window.twttr?.widgets && tweetContainerRef.current) {
             tweetContainerRef.current.innerHTML = ""; //remove previous embeds
 
-            (window as any).twttr.widgets.createTweet(tweetID, tweetContainerRef.current);
-            // setIsTweetLoaded(true);
+            window.twttr.widgets.createTweet(tweetID, tweetContainerRef.current);
         }
-    }, []); //isTweetLoaded
+    }, [tweetID]);
 
     return <div ref={tweetContainerRef}></div>;
 };
 
 export default EmbeddedTweet;
-
-
-

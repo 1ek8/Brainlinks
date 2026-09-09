@@ -19,7 +19,7 @@ export function ChatModal({ query, onClose }: ChatModalProps) {
                     headers: { "Authorization": localStorage.getItem("token") }
                 });
                 setAnswer(res.data.answer);
-            } catch (error) {
+            } catch {
                 setAnswer("Failed to fetch answer. Please try again.");
             } finally {
                 setLoading(false);
