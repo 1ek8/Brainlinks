@@ -1,4 +1,3 @@
-import { PlusIcon } from "../../icons/Plusicon"
 import { ShareIcon } from "../../icons/Shareicon"
 import { CrossIcon } from "../../icons/CrossIcon"
 import { EditIcon } from "../../icons/EditIcon"
@@ -29,13 +28,10 @@ export const Card = ({id, title, link, type, textContent, tags, highlighted, onD
     return <div id={id}> 
         <span className={`p-4 bg-white rounded-md shadow-md border-slate-200 border-1 block max-w-96 min-h-60 min-w-72 transition-shadow ${highlighted ? "ring-2 ring-purple-500 shadow-purple-100" : ""}`}>
             <div className = "flex justify-between">
-                
-                <div className = "flex items-center">
-                    <div className="p-2 text-gray-600"><ShareIcon size = "md" /></div>
+                <div className = "flex items-center font-medium">
                     {title}
                 </div>
                 <div className = "flex items-center">
-                    <div className = "p-2 text-gray-600"><PlusIcon size = "lg"/></div>
                     {onEdit && <div onClick={onEdit} className = "p-2 text-gray-600 hover:text-purple-600 cursor-pointer">
                         <EditIcon />
                     </div>}

@@ -20,10 +20,28 @@ export function SearchBar({ onOpenChat, onSelectResult }: { onOpenChat: (query: 
                 return;
             }
             try {
-                const res = await axios.get(`${BACKEND_URL}/api/v1/content/search?q=${query}`, {
-                    headers: { "Authorization": localStorage.getItem("token") }
-                });
-                setResults(res.data?.content || []);
+                const headers = { "Authorization": localStorage.getItem("token") };
+
+                // Semantic search first
+                let matched: SearchResult[] = [];
+                try {
+                    const res = await axios.get(`${BACKEND_URL}/api/v1/content/search?q=${query}`, { headers });
+                    matched = res.data?.content || [];
+                } catch {
+                    // Semantic search unavailable — fall through to title fallback
+                }
+
+                // Fallback: title substring search if semantic returned nothing
+                if (matched.length === 0) {
+                    try {
+                        const res = await axios.get(`${BACKEND_URL}/api/v1/content/title?searchValue=${query}`, { headers });
+                        matched = res.data?.content || [];
+                    } catch {
+                        // Title search failed — show empty
+                    }
+                }
+
+                setResults(matched);
                 setIsOpen(true);
             } catch {
                 console.error("Search failed");
@@ -55,7 +73,7 @@ export function SearchBar({ onOpenChat, onSelectResult }: { onOpenChat: (query: 
                             setIsOpen(false);
                         }}
                     >
-                        ✨ Answer using LLM
+                        Answer using LLM
                     </div>
                     {results.length > 0 ? results.map(item => (
                         <div key={item._id} className="p-3 border-b hover:bg-gray-50 cursor-pointer" onClick={() => {

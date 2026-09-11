@@ -434,6 +434,12 @@ app.post("/api/v1/chat", userMiddleware, chatLimiter, async (req: Request, res: 
     }
 });
 
+app.get("/api/v1/brain/share", userMiddleware, async (req: Request, res: Response) => {
+    //@ts-ignore
+    const link = await LinkModel.findOne({ userId: req.userId });
+    res.json({ hash: link?.hash || null });
+})
+
 app.post("/api/v1/brain/share", userMiddleware, async (req: Request, res: Response) => {
     const share = req.body.share;
     if(share){
