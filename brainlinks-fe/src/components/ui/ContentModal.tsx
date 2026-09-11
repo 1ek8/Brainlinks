@@ -78,7 +78,8 @@ export function CreateContentModal({open, onClose, onAdded}: ModalProps) {
             onAdded?.();
         } catch (e) {
             console.error("Failed to add content", e);
-            setError("Failed to save. Please try again.");
+            const msg = axios.isAxiosError(e) ? e.response?.data?.message : undefined;
+            setError(msg || "Failed to save. Please try again.");
             setSubmitting(false);
         }
     }

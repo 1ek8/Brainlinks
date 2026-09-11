@@ -39,6 +39,10 @@ const contentSchema = z.object({
     type: z.enum(["youtube", "twitter", "text"])
 });
 
+// Mirrors the FE embed/preview URL patterns so a note's link matches its type.
+const YOUTUBE_URL_RE = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|live\/|playlist\?list=))[\w-]+/;
+const TWITTER_URL_RE = /(?:twitter\.com|x\.com)\/\w+\/status\/\d+/;
+
 // Client IP in front of Cloudflare: the worker keeps X-Forwarded-For intact, and
 // Cloudflare always sets the first entry to the real client IP. Fall back to the
 // socket address for direct requests (no proxy) so callers can't spoof the key.
@@ -146,7 +150,9 @@ app.post("/api/v1/signin", authLimiter, async (req: Request,res: Response) =>  {
     if(existingUser && passwordMatches){
         const token = jwt.sign({
             id: existingUser._id
-        }, JWT_PASSWORD)
+        }, JWT_PASSWORD, {
+            expiresIn: "7d"
+        })
 
         res.json({token})
     }
@@ -164,6 +170,19 @@ app.post("/api/v1/content", userMiddleware, async (req: Request,res: Response) =
         return;
     }
     const { link, title, type, textContent } = parsedData.data;
+
+    if (type !== "text" && !link) {
+        res.status(400).json({ message: "A link is required for this content type." });
+        return;
+    }
+    if (type === "youtube" && !YOUTUBE_URL_RE.test(link!)) {
+        res.status(400).json({ message: "Link doesn't look like a valid YouTube URL." });
+        return;
+    }
+    if (type === "twitter" && !TWITTER_URL_RE.test(link!)) {
+        res.status(400).json({ message: "Link doesn't look like a valid tweet URL." });
+        return;
+    }
 
     const newContent = await ContentModel.create({
         link,
