@@ -9,6 +9,7 @@ export interface Content {
     type: "twitter" | "youtube" | "text";
     link?: string;
     textContent?: string;
+    tags?: { _id: string; name: string }[];
 }
 
 export function useContent() {

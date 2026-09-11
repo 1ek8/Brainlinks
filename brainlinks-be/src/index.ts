@@ -22,7 +22,7 @@ if(!MONGO_URL) {
 }
 
 mongoose.connect(process.env.MONGO_URL!)
-import { ContentModel, UserModel, LinkModel } from "./db.js"
+import { ContentModel, UserModel, LinkModel, TagModel } from "./db.js"
 import { userMiddleware } from "./middleware.js"
 
 import cors from "cors";
@@ -36,12 +36,36 @@ const contentSchema = z.object({
     title: z.string().min(1),
     link: z.url().optional().or(z.literal('')),
     textContent: z.string().optional(),
-    type: z.enum(["youtube", "twitter", "text"])
+    type: z.enum(["youtube", "twitter", "text"]),
+    tags: z.array(z.string().min(1).max(30)).optional()
 });
 
 // Mirrors the FE embed/preview URL patterns so a note's link matches its type.
 const YOUTUBE_URL_RE = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|live\/|playlist\?list=))[\w-]+/;
 const TWITTER_URL_RE = /(?:twitter\.com|x\.com)\/\w+\/status\/\d+/;
+
+const isLinkValidForType = (type: string, link?: string): boolean => {
+    if (type === "text") return true;
+    if (!link) return false;
+    if (type === "youtube") return YOUTUBE_URL_RE.test(link);
+    if (type === "twitter") return TWITTER_URL_RE.test(link);
+    return true;
+};
+
+const resolveTagIds = async (userId: string, names: string[] = []): Promise<string[]> => {
+    const ids: string[] = [];
+    for (const raw of names) {
+        const name = raw.trim().replace(/\s+/g, " ").slice(0, 30);
+        if (!name) continue;
+        const tag = await TagModel.findOneAndUpdate(
+            { name, userId },
+            { $setOnInsert: { name, userId } },
+            { upsert: true, new: true }
+        );
+        ids.push(tag._id.toString());
+    }
+    return ids;
+};
 
 // Client IP in front of Cloudflare: the worker keeps X-Forwarded-For intact, and
 // Cloudflare always sets the first entry to the real client IP. Fall back to the
@@ -169,28 +193,28 @@ app.post("/api/v1/content", userMiddleware, async (req: Request,res: Response) =
         res.status(400).json({ message: "Invalid inputs", errors: parsedData.error });
         return;
     }
-    const { link, title, type, textContent } = parsedData.data;
+    const { link, title, type, textContent, tags } = parsedData.data;
 
-    if (type !== "text" && !link) {
-        res.status(400).json({ message: "A link is required for this content type." });
+    if (type !== "text" && !isLinkValidForType(type, link)) {
+        const msg = type === "youtube"
+            ? "Link doesn't look like a valid YouTube URL."
+            : "Link doesn't look like a valid tweet URL.";
+        res.status(400).json({ message: msg });
         return;
     }
-    if (type === "youtube" && !YOUTUBE_URL_RE.test(link!)) {
-        res.status(400).json({ message: "Link doesn't look like a valid YouTube URL." });
-        return;
-    }
-    if (type === "twitter" && !TWITTER_URL_RE.test(link!)) {
-        res.status(400).json({ message: "Link doesn't look like a valid tweet URL." });
-        return;
-    }
+
+    //@ts-ignore
+    const userId = req.userId;
+
+    const tagIds = await resolveTagIds(String(userId), tags);
 
     const newContent = await ContentModel.create({
         link,
         title,
         type,
         textContent,
-        //@ts-ignore
-        userId: req.userId
+        tags: tagIds,
+        userId
     })
 
     processAndEmbedContent(newContent).catch(err => {
@@ -207,7 +231,7 @@ app.get("/api/v1/content", userMiddleware, async (req:Request, res:Response)=> {
     const userId = req.userId
     const content = await ContentModel.find({
         userId
-    }).populate("userId", "username")
+    }).populate("userId", "username").populate("tags", "name")
 
     res.json({
         content
@@ -237,7 +261,7 @@ app.get("/api/v1/content/search", userMiddleware, async (req: Request, res: Resp
 
         const content = await ContentModel.find({
             _id: { $in: matchedIds }
-        }).populate("userId", "username");
+        }).populate("userId", "username").populate("tags", "name");
 
         res.json({ content });
     } catch (error) {
@@ -264,8 +288,55 @@ app.get("/api/v1/content/title", userMiddleware, async (req: Request, res: Respo
             $regex: escaped,
             $options: "i" // case-insensitive substring match on the title
         }
-    }).populate("userId", "username")
+    }).populate("userId", "username").populate("tags", "name")
     res.json({content})
+})
+
+app.patch("/api/v1/content/:id", userMiddleware, async (req: Request, res: Response) => {
+    const contentId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(contentId)) {
+        res.status(400).json({ message: "Invalid contentId" });
+        return;
+    }
+
+    const parsedData = contentSchema.safeParse(req.body);
+    if (!parsedData.success) {
+        res.status(400).json({ message: "Invalid inputs", errors: parsedData.error });
+        return;
+    }
+
+    const { link, title, type, textContent, tags } = parsedData.data;
+
+    if (type !== "text" && !isLinkValidForType(type, link)) {
+        const msg = type === "youtube"
+            ? "Link doesn't look like a valid YouTube URL."
+            : "Link doesn't look like a valid tweet URL.";
+        res.status(400).json({ message: msg });
+        return;
+    }
+
+    //@ts-ignore
+    const userId = req.userId;
+    const tagIds = await resolveTagIds(String(userId), tags);
+
+    const updated = await ContentModel.findOneAndUpdate(
+        { _id: contentId, userId },
+        { title, link, type, textContent, tags: tagIds },
+        { new: true }
+    );
+
+    if (!updated) {
+        res.status(404).json({ message: "Content not found" });
+        return;
+    }
+
+    // Upsert by _id is idempotent in Pinecone, so re-embedding the edited note is safe.
+    processAndEmbedContent(updated).catch(err =>
+        console.error("Unhandled error re-embedding content:", err)
+    );
+
+    res.json({ message: "Content updated", content: updated });
 })
 
 app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response) => {
@@ -419,7 +490,7 @@ app.get("/api/v1/brain/:shareLink", async (req: Request, res: Response) => {
     
     const content = await ContentModel.find({
         userId: link.userId    
-    })
+    }).populate("tags", "name")
 
     const user = await UserModel.findOne({
         _id: link.userId

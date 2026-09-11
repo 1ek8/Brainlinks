@@ -6,7 +6,7 @@ import { Card } from '../components/ui/Card'
 import { CreateContentModal } from '../components/ui/ContentModal'
 import { useState, useEffect } from 'react'
 import { Sidebar } from '../components/ui/Sidebar'
-import { useContent } from '../hooks/useContent'
+import { useContent, Content } from '../hooks/useContent'
 import { SearchBar } from "../components/ui/SearchBar";
 import { ChatModal } from "../components/ui/ChatModal";
 import { ShareModal } from "../components/ui/ShareModal";
@@ -15,6 +15,7 @@ import { BACKEND_URL } from "../config";
 
 export function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState<Content | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
   const [chatQuery, setChatQuery] = useState<string | null>(null);
   const [filter, setFilter] = useState<string | null>(null);
@@ -51,7 +52,7 @@ export function Dashboard() {
     <>
       <Sidebar activeType={filter} onSelectType={setFilter} />
       <div className='p-3 ml-60 min-h-screen bg-gray-100'>
-        <CreateContentModal open = {modalOpen} onClose={() => { setModalOpen(false)}} onAdded={refresh} />
+        <CreateContentModal open={modalOpen} onClose={() => { setModalOpen(false); setEditing(null); }} onAdded={refresh} initial={editing} />
 
         {chatQuery && (
                     <ChatModal query={chatQuery} onClose={() => setChatQuery(null)} />
@@ -63,7 +64,7 @@ export function Dashboard() {
             <SearchBar onOpenChat={(query) => setChatQuery(query)} onSelectResult={(id) => setHighlightedId(id)} />
             
             <div className="flex justify-end gap-4">
-                <Button onClick={() => setModalOpen(true)} startIcon={<PlusIcon size="md" />} size="md" variant="primary" text="Add Content" />
+                <Button onClick={() => { setEditing(null); setModalOpen(true); }} startIcon={<PlusIcon size="md" />} size="md" variant="primary" text="Add Content" />
                 <Button onClick={() => setShareOpen(true)} startIcon={<ShareIcon size="md" />} size="md" variant="secondary" text="Share brain" />
             </div>
           </div>
@@ -72,15 +73,17 @@ export function Dashboard() {
           {filteredContents.length === 0 ? (
             <div className="p-4 text-gray-500">{filter ? `No ${filter} notes yet.` : 'No notes yet. Click "Add Content" to get started.'}</div>
           ) : (
-            filteredContents.map(({ _id, type, link, title, textContent }) => <Card
+            filteredContents.map(({ _id, type, link, title, textContent, tags }) => <Card
               key={_id}
               id={`card-${_id}`}
               title={title}
               type={type}
               link={link}
               textContent={textContent}
+              tags={tags}
               highlighted={highlightedId === _id}
               onDelete={() => deleteContent(_id)}
+              onEdit={() => { setEditing(contents.find(c => c._id === _id) ?? null); setModalOpen(true); }}
             />)
           )}
         </div>

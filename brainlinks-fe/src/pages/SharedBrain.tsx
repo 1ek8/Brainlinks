@@ -11,6 +11,7 @@ interface SharedContentItem {
     type: "twitter" | "youtube" | "text";
     link?: string;
     textContent?: string;
+    tags?: { _id: string; name: string }[];
 }
 
 export function SharedBrain() {
@@ -48,8 +49,8 @@ export function SharedBrain() {
                     <div className="p-4 text-gray-500">No notes shared.</div>
                 ) : (
                     <div className="flex flex-wrap gap-4">
-                        {contents.map(({ _id, type, link, title, textContent }) => (
-                            <Card key={_id} title={title} type={type} link={link} textContent={textContent} />
+                        {contents.map(({ _id, type, link, title, textContent, tags }) => (
+                            <Card key={_id} title={title} type={type} link={link} textContent={textContent} tags={tags} />
                         ))}
                     </div>
                 )}

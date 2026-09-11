@@ -4,13 +4,23 @@ import { CrossIcon } from "../../icons/CrossIcon";
 import { Button } from "./Button";
 import { Input } from "./InputBox";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { BACKEND_URL } from "../../config";
 
 interface ModalProps {
     open: boolean;
     onClose: () => void;
     onAdded?: () => void;
+    initial?: Content | null;
+}
+
+interface Content {
+    _id: string;
+    title: string;
+    type: "youtube" | "twitter" | "text";
+    link?: string;
+    textContent?: string;
+    tags?: { _id: string; name: string }[];
 }
 
 enum ContentType {
@@ -19,22 +29,30 @@ enum ContentType {
     Text = "text"
 }
 
-export function CreateContentModal({open, onClose, onAdded}: ModalProps) {
+export function CreateContentModal({open, onClose, onAdded, initial = null}: ModalProps) {
     const modalRef = useOutsideClick(onClose);
     const titleRef = useRef<HTMLInputElement>(null);
     const linkRef = useRef<HTMLInputElement>(null);
     const textContentRef = useRef<HTMLTextAreaElement>(null);
+    const tagsRef = useRef<HTMLInputElement>(null);
 
     const [type, setType] = useState(ContentType.Youtube);
     const [error, setError] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
-    function resetForm() {
+    const resetForm = useCallback(() => {
         setError("");
-        if (titleRef.current) titleRef.current.value = "";
-        if (linkRef.current) linkRef.current.value = "";
-        if (textContentRef.current) textContentRef.current.value = "";
-    }
+        const init = initial;
+        if (titleRef.current) titleRef.current.value = init?.title || "";
+        if (linkRef.current) linkRef.current.value = init?.link || "";
+        if (textContentRef.current) textContentRef.current.value = init?.textContent || "";
+        if (tagsRef.current) tagsRef.current.value = init?.tags?.map(t => t.name).join(", ") || "";
+        setType((init?.type as ContentType) ?? ContentType.Youtube);
+    }, [initial]);
+
+    useEffect(() => {
+        if (open) resetForm();
+    }, [open, resetForm]);
 
     function closeModal() {
         setSubmitting(false);
@@ -48,6 +66,7 @@ export function CreateContentModal({open, onClose, onAdded}: ModalProps) {
         const title = titleRef.current?.value?.trim();
         const link = linkRef.current?.value?.trim();
         const textContent = textContentRef.current?.value?.trim();
+        const tags = (tagsRef.current?.value || "").split(",").map(t => t.trim()).filter(Boolean);
 
         if (!title) {
             setError("Title is required.");
@@ -62,22 +81,33 @@ export function CreateContentModal({open, onClose, onAdded}: ModalProps) {
             return;
         }
 
+        const payload = {
+            title,
+            link,
+            type,
+            textContent,
+            tags
+        };
+
         setSubmitting(true);
         try {
-            await axios.post(BACKEND_URL + "/api/v1/content", {
-                link,
-                title,
-                type,
-                textContent
-            }, {
-                headers: {
-                    "Authorization": localStorage.getItem("token")
-                }
-            });
+            if (initial) {
+                await axios.patch(`${BACKEND_URL}/api/v1/content/${initial._id}`, payload, {
+                    headers: {
+                        "Authorization": localStorage.getItem("token")
+                    }
+                });
+            } else {
+                await axios.post(BACKEND_URL + "/api/v1/content", payload, {
+                    headers: {
+                        "Authorization": localStorage.getItem("token")
+                    }
+                });
+            }
             closeModal();
             onAdded?.();
         } catch (e) {
-            console.error("Failed to add content", e);
+            console.error("Failed to save content", e);
             const msg = axios.isAxiosError(e) ? e.response?.data?.message : undefined;
             setError(msg || "Failed to save. Please try again.");
             setSubmitting(false);
@@ -110,9 +140,12 @@ export function CreateContentModal({open, onClose, onAdded}: ModalProps) {
                             <Button size = "md" text = "Twitter" variant = {type === ContentType.Twitter ? "primary" : "secondary"} onClick={() => handleTypeChange(ContentType.Twitter)} />
                             <Button size = "md" text = "Text" variant = {type === ContentType.Text ? "primary" : "secondary"} onClick = {() => handleTypeChange(ContentType.Text)} />
                         </div>
+                        <div>
+                            <Input reference = {tagsRef} placeholder = "Tags (comma separated)"/>
+                        </div>
                         {error && <p className="text-sm text-red-500 text-center px-2">{error}</p>}
                         <div className="flex justify-center p-2">
-                            <Button onClick = {addContent} size = "md" text = "Submit" variant = "primary" loading={submitting} />
+                            <Button onClick = {addContent} size = "md" text = {initial ? "Update note" : "Submit"} variant = "primary" loading={submitting} />
                         </div>
 
                     </div>
