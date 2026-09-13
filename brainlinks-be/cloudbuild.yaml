@@ -3,8 +3,10 @@ options:
 
 steps:
   - name: 'gcr.io/cloud-builders/docker'
+    dir: brainlinks-be
     args: ['build', '-t', 'asia-south1-docker.pkg.dev/$PROJECT_ID/brainlinks/be:latest', '.']
   - name: 'gcr.io/cloud-builders/docker'
+    dir: brainlinks-be
     args: ['push', 'asia-south1-docker.pkg.dev/$PROJECT_ID/brainlinks/be:latest']
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'gcloud'
