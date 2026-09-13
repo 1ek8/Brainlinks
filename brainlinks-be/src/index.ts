@@ -67,13 +67,22 @@ const resolveTagIds = async (userId: string, names: string[] = []): Promise<stri
     return ids;
 };
 
-// Client IP in front of Cloudflare: the worker keeps X-Forwarded-For intact, and
-// Cloudflare always sets the first entry to the real client IP. Fall back to the
-// socket address for direct requests (no proxy) so callers can't spoof the key.
+// Client IP for rate-limit keys. Trusting the FIRST X-Forwarded-For entry is a
+// bypass: the *.run.app origin is public, so an attacker can hit it directly and
+// forge an arbitrary first entry to rotate keys and dodge the auth limiter.
+// Every request (via Cloudflare worker or direct) passes Google's front end, which
+// APPENDS the real immediate peer as the LAST entry — that entry can never be
+// spoofed by the caller. For proxied traffic it is Cloudflare's egress IP; for
+// direct traffic it's the actual client (or, absent any XFF, the socket peer).
+// All legitimate traffic uses the branded URLs through the worker, so nobody is
+// throttled wrongly, and spoofing the chain no longer buys a limiter bypass.
 const clientIp = (req: Request): string => {
     const xff = req.headers["x-forwarded-for"];
-    const first = (Array.isArray(xff) ? xff[0] : xff?.split(",")[0] ?? "").trim();
-    return first || req.socket?.remoteAddress || "";
+    const chain = (Array.isArray(xff) ? xff.join(",") : xff ?? "")
+        .split(",")
+        .map((entry) => entry.trim())
+        .filter(Boolean);
+    return chain[chain.length - 1] || req.socket?.remoteAddress || "unknown";
 };
 
 // Generic limiter for auth endpoints (brute-force protection)
@@ -102,6 +111,7 @@ const chatLimiter = rateLimit({
 const FRONTEND_URL = process.env.FRONTEND_URL || "*";
 
 const app = express();
+app.set("trust proxy", true);
 app.use(express.json())
 app.use(cors({
     origin: FRONTEND_URL === "*" ? "*" : FRONTEND_URL.split(","),

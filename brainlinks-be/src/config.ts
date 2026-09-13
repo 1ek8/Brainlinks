@@ -17,11 +17,11 @@ const requiredVars = [
   "OPENROUTER_API_KEY",
   "PINECONE_API_KEY",
   "PINECONE_HOST",
-];
+] as const;
 
 for (const varName of requiredVars) {
   if (!process.env[varName]) {
-    console.warn(`⚠️  Missing environment variable: ${varName}`);
+    throw new Error(`Missing required environment variable: ${varName}`);
   }
 }
 
