@@ -12,6 +12,7 @@ import { querySimilarVectors } from "./config/pinecone.js";
 import { deleteFromPinecone } from "./config/pinecone.js";
 import { openRouter } from "./services/embeddings.js";
 import { processAndEmbedContent } from "./services/contentProcessor.js";
+import { asyncHandler, errorHandler, notFound } from "./asyncHandler.js";
 
 dotenv.config();
 
@@ -122,7 +123,7 @@ app.get("/", (req: Request, res: Response) => {
     res.json({ status: "ok" })
 });
 
-app.post("/api/v1/signup", authLimiter, async (req: Request,res: Response) => {
+app.post("/api/v1/signup", authLimiter, asyncHandler(async (req: Request,res: Response) => {
     const parsedData = signupSchema.safeParse(req.body);
     if (!parsedData.success) {
         res.status(400).json({ message: "Invalid input", errors: parsedData.error });
@@ -149,9 +150,9 @@ app.post("/api/v1/signup", authLimiter, async (req: Request,res: Response) => {
             "message": "An unexpected error occurred. Please try again."
         })
     }
-})
+}))
 
-app.post("/api/v1/signin", authLimiter, async (req: Request,res: Response) =>  {
+app.post("/api/v1/signin", authLimiter, asyncHandler(async (req: Request,res: Response) =>  {
     const parsedData = signupSchema.safeParse(req.body);
     if (!parsedData.success) {
         res.status(400).json({ message: "Invalid input", errors: parsedData.error });
@@ -195,9 +196,9 @@ app.post("/api/v1/signin", authLimiter, async (req: Request,res: Response) =>  {
             message: "Incorrect Credentials"
         })
     }
-})
+}))
 
-app.post("/api/v1/content", userMiddleware, async (req: Request,res: Response) => {
+app.post("/api/v1/content", userMiddleware, asyncHandler(async (req: Request,res: Response) => {
     const parsedData = contentSchema.safeParse(req.body);
     if (!parsedData.success) {
         res.status(400).json({ message: "Invalid inputs", errors: parsedData.error });
@@ -234,9 +235,9 @@ app.post("/api/v1/content", userMiddleware, async (req: Request,res: Response) =
     res.json({
         message: "Content Added successfully. Context processing in the background." 
     })
-})
+}))
 
-app.get("/api/v1/content", userMiddleware, async (req:Request, res:Response)=> {
+app.get("/api/v1/content", userMiddleware, asyncHandler(async (req:Request, res:Response)=> {
     //@ts-ignore
     const userId = req.userId
     const content = await ContentModel.find({
@@ -246,9 +247,9 @@ app.get("/api/v1/content", userMiddleware, async (req:Request, res:Response)=> {
     res.json({
         content
     })
-})
+}))
 
-app.get("/api/v1/content/search", userMiddleware, async (req: Request, res: Response) => {
+app.get("/api/v1/content/search", userMiddleware, asyncHandler(async (req: Request, res: Response) => {
     
     //@ts-ignore
     const userId = req.userId;
@@ -277,9 +278,9 @@ app.get("/api/v1/content/search", userMiddleware, async (req: Request, res: Resp
     } catch (error) {
         res.status(500).json({ message: "Semantic search failed" });
     }
-});
+}));
 
-app.get("/api/v1/content/title", userMiddleware, async (req: Request, res: Response) => {
+app.get("/api/v1/content/title", userMiddleware, asyncHandler(async (req: Request, res: Response) => {
     //@ts-ignore
     const userId = req.userId;
     const searchValue = req.query.searchValue as string;
@@ -300,9 +301,9 @@ app.get("/api/v1/content/title", userMiddleware, async (req: Request, res: Respo
         }
     }).populate("userId", "username").populate("tags", "name")
     res.json({content})
-})
+}))
 
-app.patch("/api/v1/content/:id", userMiddleware, async (req: Request, res: Response) => {
+app.patch("/api/v1/content/:id", userMiddleware, asyncHandler(async (req: Request, res: Response) => {
     const contentId = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(contentId)) {
@@ -347,9 +348,9 @@ app.patch("/api/v1/content/:id", userMiddleware, async (req: Request, res: Respo
     );
 
     res.json({ message: "Content updated", content: updated });
-})
+}))
 
-app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response) => {
+app.delete("/api/v1/content", userMiddleware, asyncHandler(async (req: Request, res: Response) => {
     const contentId = req.body.contentId;
 
     if (!contentId) {
@@ -375,9 +376,9 @@ app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response
     }
 
     res.json({ message: "Content deleted" });
-})
+}))
 
-app.post("/api/v1/chat", userMiddleware, chatLimiter, async (req: Request, res: Response) => {
+app.post("/api/v1/chat", userMiddleware, chatLimiter, asyncHandler(async (req: Request, res: Response) => {
     const query = req.body.query as string;
     //@ts-ignore
     const userId = req.userId;
@@ -442,15 +443,15 @@ app.post("/api/v1/chat", userMiddleware, chatLimiter, async (req: Request, res: 
         console.error("Chat error:", error);
         res.status(500).json({ message: "Failed to generate answer" });
     }
-});
+}));
 
-app.get("/api/v1/brain/share", userMiddleware, async (req: Request, res: Response) => {
+app.get("/api/v1/brain/share", userMiddleware, asyncHandler(async (req: Request, res: Response) => {
     //@ts-ignore
     const link = await LinkModel.findOne({ userId: req.userId });
     res.json({ hash: link?.hash || null });
-})
+}))
 
-app.post("/api/v1/brain/share", userMiddleware, async (req: Request, res: Response) => {
+app.post("/api/v1/brain/share", userMiddleware, asyncHandler(async (req: Request, res: Response) => {
     const share = req.body.share;
     if(share){
     //need to look up if return statement after if-if block's end is really necessary
@@ -488,9 +489,9 @@ app.post("/api/v1/brain/share", userMiddleware, async (req: Request, res: Respon
         })
     }
     
-})
+}))
 
-app.get("/api/v1/brain/:shareLink", async (req: Request, res: Response) => {
+app.get("/api/v1/brain/:shareLink", asyncHandler(async (req: Request, res: Response) => {
     const hash = req.params.shareLink;
 
     const link = await LinkModel.findOne({
@@ -524,8 +525,21 @@ app.get("/api/v1/brain/:shareLink", async (req: Request, res: Response) => {
         username: user.username,
         content
     })
-})
+}))
 
+
+// Unknown routes get a JSON 404, and any error thrown/rejected by a handler is
+// turned into a JSON 500 (previously a rejected async handler left the client
+// hanging with no response at all).
+app.use(notFound);
+app.use(errorHandler);
+
+process.on("unhandledRejection", (reason) => {
+    console.error("Unhandled promise rejection:", reason);
+});
+process.on("uncaughtException", (err) => {
+    console.error("Uncaught exception:", err);
+});
 
 app.listen(Number(PORT), () => {
     console.log(`Server running on port ${PORT}`);
