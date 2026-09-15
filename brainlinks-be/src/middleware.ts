@@ -7,7 +7,7 @@ export const userMiddleware = (req: Request, res: Response, next: NextFunction) 
     const header = req.headers["authorization"];
 
     if (!header) {
-        res.status(403).json({ message: "You aren't logged in" });
+        res.status(401).json({ message: "You aren't logged in" });
         return;
     }
 
@@ -19,13 +19,13 @@ export const userMiddleware = (req: Request, res: Response, next: NextFunction) 
             req.userId = decoded.id;
             next() 
         } else {
-            res.status(403).json({
+            res.status(401).json({
                 message: "You arent logged in"
             })
         }
 
     } catch (error) {
-        res.status(403).json({ message: "Invalid or expired token" });
+        res.status(401).json({ message: "Invalid or expired token" });
     }
 
 }

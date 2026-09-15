@@ -137,7 +137,7 @@ app.post("/api/v1/signup", authLimiter, asyncHandler(async (req: Request,res: Re
             password: hashedPassword
         })
 
-        res.json("User Signed up")
+        res.status(201).json("User Signed up")
     }catch(e: any){
         if (e && e.code === 11000) {
             res.status(409).json({
@@ -192,7 +192,7 @@ app.post("/api/v1/signin", authLimiter, asyncHandler(async (req: Request,res: Re
         res.json({token})
     }
     else{
-        res.status(403).json({
+        res.status(401).json({
             message: "Incorrect Credentials"
         })
     }
@@ -232,7 +232,7 @@ app.post("/api/v1/content", userMiddleware, asyncHandler(async (req: Request,res
         console.error("Unhandled error in background processor:", err);
     });
 
-    res.json({
+    res.status(201).json({
         message: "Content Added successfully. Context processing in the background." 
     })
 }))
@@ -369,11 +369,14 @@ app.delete("/api/v1/content", userMiddleware, asyncHandler(async (req: Request, 
         userId: req.userId
     });
 
-    if (result.deletedCount > 0) {
-        deleteFromPinecone(contentId).catch(err =>
-            console.error("Unhandled error deleting from Pinecone:", err)
-        );
+    if (result.deletedCount === 0) {
+        res.status(404).json({ message: "Content not found" });
+        return;
     }
+
+    deleteFromPinecone(contentId).catch(err =>
+        console.error("Unhandled error deleting from Pinecone:", err)
+    );
 
     res.json({ message: "Content deleted" });
 }))
@@ -473,7 +476,7 @@ app.post("/api/v1/brain/share", userMiddleware, asyncHandler(async (req: Request
             hash
         })
 
-        res.json({
+        res.status(201).json({
             hash
         })
         return;
