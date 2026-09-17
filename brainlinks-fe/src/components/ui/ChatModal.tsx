@@ -13,19 +13,30 @@ export function ChatModal({ query, onClose }: ChatModalProps) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchAnswer = async () => {
+            // Reset so a reused/requeried modal never flashes the previous answer.
+            setAnswer("");
+            setLoading(true);
             try {
                 const res = await axios.post(`${BACKEND_URL}/api/v1/chat`, { query }, {
-                    headers: { "Authorization": localStorage.getItem("token") }
+                    headers: { "Authorization": localStorage.getItem("token") },
+                    signal: controller.signal
                 });
                 setAnswer(res.data.answer);
-            } catch {
+            } catch (e) {
+                if (axios.isCancel(e)) return;// closed mid-request: safe to ignore
                 setAnswer("Failed to fetch answer. Please try again.");
             } finally {
                 setLoading(false);
             }
         };
         fetchAnswer();
+
+        // Abort the in-flight LLM round-trip when the modal closes or the query
+        // changes, so we don't setState on an unmounted component.
+        return () => controller.abort();
     }, [query]);
 
     return (
