@@ -14,42 +14,53 @@ export function SearchBar({ onOpenChat, onSelectResult }: { onOpenChat: (query: 
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchResults = async () => {
             if (query.length < 3) {
                 setResults([]);
+                setIsOpen(false);
                 return;
             }
             try {
                 const headers = { "Authorization": localStorage.getItem("token") };
+                const options = { headers, signal: controller.signal };
 
                 // Semantic search first
                 let matched: SearchResult[] = [];
                 try {
-                    const res = await axios.get(`${BACKEND_URL}/api/v1/content/search?q=${query}`, { headers });
+                    const res = await axios.get(`${BACKEND_URL}/api/v1/content/search?q=${query}`, options);
                     matched = res.data?.content || [];
-                } catch {
-                    // Semantic search unavailable — fall through to title fallback
+                } catch (e) {
+                    if (axios.isCancel(e)) return;// superseded by a newer query
                 }
 
                 // Fallback: title substring search if semantic returned nothing
                 if (matched.length === 0) {
                     try {
-                        const res = await axios.get(`${BACKEND_URL}/api/v1/content/title?searchValue=${query}`, { headers });
+                        const res = await axios.get(`${BACKEND_URL}/api/v1/content/title?searchValue=${query}`, options);
                         matched = res.data?.content || [];
-                    } catch {
-                        // Title search failed — show empty
+                    } catch (e) {
+                        if (axios.isCancel(e)) return;
                     }
                 }
 
                 setResults(matched);
                 setIsOpen(true);
-            } catch {
+            } catch (e) {
+                if (axios.isCancel(e)) return;
                 console.error("Search failed");
             }
         };
 
         const timeoutId = setTimeout(fetchResults, 400); // Debounce
-        return () => clearTimeout(timeoutId);
+        return () => {
+            clearTimeout(timeoutId);
+            // Abort any in-flight search the moment the query changes or the
+            // component unmounts, so a stale response can never overwrite the
+            // results of a newer query.
+            controller.abort();
+        };
     }, [query]);
 
     return (
