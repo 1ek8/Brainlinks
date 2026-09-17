@@ -56,7 +56,9 @@ const isLinkValidForType = (type: string, link?: string): boolean => {
 const resolveTagIds = async (userId: string, names: string[] = []): Promise<string[]> => {
     const ids: string[] = [];
     for (const raw of names) {
-        const name = raw.trim().replace(/\s+/g, " ").slice(0, 30);
+        // Lowercase first so the unique (name, userId) index treats "AI" and
+        // "ai" as the same tag regardless of which client saved it.
+        const name = raw.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 30);
         if (!name) continue;
         const tag = await TagModel.findOneAndUpdate(
             { name, userId },

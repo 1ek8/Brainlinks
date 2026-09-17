@@ -66,7 +66,12 @@ export function CreateContentModal({open, onClose, onAdded, initial = null}: Mod
         const title = titleRef.current?.value?.trim();
         const link = linkRef.current?.value?.trim();
         const textContent = textContentRef.current?.value?.trim();
-        const tags = (tagsRef.current?.value || "").split(",").map(t => t.trim()).filter(Boolean);
+        // Trim + lowercase + dedupe + cap so "AI, ai" and "react,react" collapse to
+// one canonical tag, and a bulked-up tag list can't spawn dozens of DB writes.
+const rawTags = (tagsRef.current?.value || "").split(",");
+const tags = Array.from(
+    new Set(rawTags.map(t => t.trim().toLowerCase()).filter(Boolean))
+).slice(0, 5);
 
         if (!title) {
             setError("Title is required.");
