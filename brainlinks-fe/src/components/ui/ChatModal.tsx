@@ -11,6 +11,7 @@ interface ChatModalProps {
 export function ChatModal({ query, onClose }: ChatModalProps) {
     const [answer, setAnswer] = useState("");
     const [loading, setLoading] = useState(true);
+    const [elapsed, setElapsed] = useState(0);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -19,6 +20,7 @@ export function ChatModal({ query, onClose }: ChatModalProps) {
             // Reset so a reused/requeried modal never flashes the previous answer.
             setAnswer("");
             setLoading(true);
+            setElapsed(0);
             try {
                 const res = await axios.post(`${BACKEND_URL}/api/v1/chat`, { query }, {
                     headers: { "Authorization": localStorage.getItem("token") },
@@ -27,16 +29,23 @@ export function ChatModal({ query, onClose }: ChatModalProps) {
                 setAnswer(res.data.answer);
             } catch (e) {
                 if (axios.isCancel(e)) return;// closed mid-request: safe to ignore
-                setAnswer("Failed to fetch answer. Please try again.");
+                // Surface the backend's own message (e.g. 429 "Too many chat
+                // requests…") instead of hiding it behind a generic error.
+                const msg = axios.isAxiosError(e) ? e.response?.data?.message : undefined;
+                setAnswer(msg || "Failed to fetch answer. Please try again.");
             } finally {
                 setLoading(false);
             }
         };
+        const elapsedTimer = setInterval(() => setElapsed(s => s + 1), 1000);
         fetchAnswer();
 
         // Abort the in-flight LLM round-trip when the modal closes or the query
         // changes, so we don't setState on an unmounted component.
-        return () => controller.abort();
+        return () => {
+            clearInterval(elapsedTimer);
+            controller.abort();
+        };
     }, [query]);
 
     return (
@@ -56,12 +65,17 @@ export function ChatModal({ query, onClose }: ChatModalProps) {
                     
                     <div className="text-gray-700 whitespace-pre-wrap leading-relaxed">
                         {loading ? (
-                            <span className="animate-pulse flex items-center gap-2">
-                                <span>Thinking</span>
-                                <span className="flex gap-1">
-                                    <span className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce"></span>
-                                    <span className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></span>
-                                    <span className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: "0.4s"}}></span>
+                            <span className="animate-pulse flex flex-col gap-3">
+                                <span className="flex items-center gap-2">
+                                    <span>Thinking</span>
+                                    <span className="flex gap-1">
+                                        <span className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce"></span>
+                                        <span className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></span>
+                                        <span className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: "0.4s"}}></span>
+                                    </span>
+                                </span>
+                                <span className="text-xs text-gray-400">
+                                    Still thinking — the answer can take up to 30s… ({elapsed}s)
                                 </span>
                             </span>
                         ) : answer}
