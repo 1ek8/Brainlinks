@@ -64,11 +64,39 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
         }
     }
 
-    function copyLink() {
+    async function copyLink() {
         if (!link) return;
-        navigator.clipboard?.writeText(link);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
+        setError("");
+        try {
+            await navigator.clipboard.writeText(link);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+        } catch {
+            // Non-secure context or permission denied — legacy fallback.
+            if (fallbackCopy(link)) {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+            } else {
+                setError("Couldn't copy — select the field and press ⌘/Ctrl+C.");
+            }
+        }
+    }
+
+    function fallbackCopy(text: string): boolean {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        let ok = false;
+        try {
+            ok = document.execCommand("copy");
+        } catch {
+            ok = false;
+        }
+        document.body.removeChild(textarea);
+        return ok;
     }
 
     if (!open) return null;
