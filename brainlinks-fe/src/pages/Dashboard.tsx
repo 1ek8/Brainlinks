@@ -20,7 +20,8 @@ export function Dashboard() {
   const [chatQuery, setChatQuery] = useState<string | null>(null);
   const [filter, setFilter] = useState<string | null>(null);
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
-  const { contents, refresh } = useContent();
+  const [actionError, setActionError] = useState<string | null>(null);
+  const { contents, refresh, loading, error } = useContent();
 
   const filteredContents = filter ? contents.filter((c) => c.type === filter) : contents;
 
@@ -35,6 +36,7 @@ export function Dashboard() {
 
   async function deleteContent(id: string) {
     if (!window.confirm("Delete this note?")) return;
+    setActionError(null);
     try {
       await axios.delete(BACKEND_URL + "/api/v1/content", {
         data: { contentId: id },
@@ -45,6 +47,7 @@ export function Dashboard() {
       refresh();
     } catch (error) {
       console.error("Failed to delete content", error);
+      setActionError("Failed to delete note — please try again.");
     }
   }
 
@@ -71,8 +74,22 @@ export function Dashboard() {
             </div>
           </div>
 
+        {actionError && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-md flex justify-between items-center">
+            <span>{actionError}</span>
+            <button onClick={() => setActionError(null)} className="font-medium hover:underline">Dismiss</button>
+          </div>
+        )}
+
         <div className='flex flex-wrap gap-4'>
-          {filteredContents.length === 0 ? (
+          {loading ? (
+            <div className="p-4 text-gray-500">Loading your brain…</div>
+          ) : error && contents.length === 0 ? (
+            <div className="p-4 flex items-center gap-3">
+              <span className="text-red-500">Failed to load your notes.</span>
+              <Button onClick={refresh} size="md" variant="secondary" text="Retry" />
+            </div>
+          ) : filteredContents.length === 0 ? (
             <div className="p-4 text-gray-500">{filter ? `No ${filter} notes yet.` : 'No notes yet. Click "Add Content" to get started.'}</div>
           ) : (
             filteredContents.map(({ _id, type, link, title, textContent, tags }) => <Card

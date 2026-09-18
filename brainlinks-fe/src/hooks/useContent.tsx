@@ -15,6 +15,7 @@ export interface Content {
 export function useContent() {
     const [contents, setContents] = useState<Content[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     async function refresh() {
         try {
@@ -24,8 +25,10 @@ export function useContent() {
                 }
             });
             setContents(Array.isArray(response.data.content) ? response.data.content : []);
+            setError(false);
         } catch (error) {
             console.error("Failed to load content", error);
+            setError(true);
         } finally {
             setLoading(false);
         }
@@ -35,5 +38,5 @@ export function useContent() {
         refresh();
     }, []);
 
-    return { contents, refresh, loading };
+    return { contents, refresh, loading, error };
 }
