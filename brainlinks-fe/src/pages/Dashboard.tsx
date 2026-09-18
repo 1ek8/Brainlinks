@@ -52,7 +52,9 @@ export function Dashboard() {
     <>
       <Sidebar activeType={filter} onSelectType={setFilter} />
       <div className='p-3 ml-60 min-h-screen bg-gray-100'>
-        <CreateContentModal open={modalOpen} onClose={() => { setModalOpen(false); setEditing(null); }} onAdded={refresh} initial={editing} />
+        {/* Keyed by editing id so each open remounts the modal with a clean
+            slate — refs can never leak content from a previous open. */}
+        <CreateContentModal key={editing?._id ?? "new"} open={modalOpen} onClose={() => { setModalOpen(false); setEditing(null); }} onAdded={refresh} initial={editing} />
 
         {chatQuery && (
                     <ChatModal query={chatQuery} onClose={() => setChatQuery(null)} />

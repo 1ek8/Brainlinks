@@ -46,7 +46,15 @@ export function CreateContentModal({open, onClose, onAdded, initial = null}: Mod
         if (titleRef.current) titleRef.current.value = init?.title || "";
         if (linkRef.current) linkRef.current.value = init?.link || "";
         if (textContentRef.current) textContentRef.current.value = init?.textContent || "";
-        if (tagsRef.current) tagsRef.current.value = init?.tags?.map(t => t.name).join(", ") || "";
+        // Normalize the same way the save path does, so editing a legacy
+        // "AI, React" note never shows casing/dupes that would spawn a new tag
+        // doc (or a disallowed duplicate) on the next save.
+        if (tagsRef.current) {
+            const initialNames = (init?.tags ?? [])
+                .map(t => t.name.trim().toLowerCase())
+                .filter(Boolean);
+            tagsRef.current.value = Array.from(new Set(initialNames)).slice(0, 5).join(", ");
+        }
         setType((init?.type as ContentType) ?? ContentType.Youtube);
     }, [initial]);
 
