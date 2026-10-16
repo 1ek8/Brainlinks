@@ -1,9 +1,22 @@
 import { initEmbeddingModel } from "./embeddings.js";
 import { upsertToPinecone } from "../config/pinecone.js";
 import { getYoutubeTranscript, getTweetText } from "./scraper.js";
+import { ContentModel } from "../db.js";
 
 export async function processAndEmbedContent(contentDoc: any) {
     try {
+        const stillExists = () => ContentModel.exists({
+            _id: contentDoc._id,
+            userId: contentDoc.userId
+        });
+
+        // The user may already have deleted the note before this job even
+        // starts — skip the scrape/embed work entirely.
+        if (!(await stillExists())) {
+            console.log(`Skipping processing — content already deleted: ${contentDoc._id}`);
+            return;
+        }
+
         console.log(`Starting background processing for: ${contentDoc.title}`);
         let scrapedContext = "";
 
@@ -30,6 +43,14 @@ export async function processAndEmbedContent(contentDoc: any) {
         const getEmbedding = await initEmbeddingModel();
         const output = await getEmbedding(combinedText, { pooling: 'mean', normalize: true });
         const embeddingArray = Array.from(output.data) as number[];
+
+        // Re-check right before the upsert: if the note was deleted while we
+        // were scraping/embedding, writing the vector now would resurrect it
+        // as an orphaned Pinecone ghost that still shows up in semantic search.
+        if (!(await stillExists())) {
+            console.log(`Skipping upsert — content deleted mid-processing: ${contentDoc._id}`);
+            return;
+        }
 
         // Upsert to Pinecone
         await upsertToPinecone(
