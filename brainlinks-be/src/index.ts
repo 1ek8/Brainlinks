@@ -72,12 +72,24 @@ const resolveTagIds = async (userId: string, names: string[] = []): Promise<stri
         // "ai" as the same tag regardless of which client saved it.
         const name = raw.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 30);
         if (!name) continue;
-        const tag = await TagModel.findOneAndUpdate(
-            { name, userId },
-            { $setOnInsert: { name, userId } },
-            { upsert: true, new: true }
-        );
-        ids.push(tag._id.toString());
+        let tag;
+        try {
+            tag = await TagModel.findOneAndUpdate(
+                { name, userId },
+                { $setOnInsert: { name, userId } },
+                { upsert: true, new: true }
+            );
+        } catch (e: any) {
+            // Two concurrent saves racing on the same new tag both try the
+            // insert; the loser hits the unique-index E11000. Just fetch the
+            // winner's doc instead of failing the whole save.
+            if (e?.code === 11000) {
+                tag = await TagModel.findOne({ name, userId });
+            } else {
+                throw e;
+            }
+        }
+        if (tag) ids.push(tag._id.toString());
     }
     return ids;
 };
