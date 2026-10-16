@@ -1,21 +1,21 @@
 import { initEmbeddingModel } from "./embeddings.js";
 import { upsertToPinecone } from "../config/pinecone.js";
-import { scrapeWebPage, getYoutubeTranscript, getTweetText } from "./scraper.js";
+import { getYoutubeTranscript, getTweetText } from "./scraper.js";
 
 export async function processAndEmbedContent(contentDoc: any) {
     try {
         console.log(`Starting background processing for: ${contentDoc.title}`);
         let scrapedContext = "";
 
-        // Route to the correct scraper based on type
+        // Only the youtube/twitter scrapers run, and only on links that
+        // already passed type-specific validation on save. Text notes are
+        // embedded from the user's own title + note — we never fetch a
+        // user-supplied URL for them.
         if (contentDoc.link) {
             if (contentDoc.type === "youtube") {
                 scrapedContext = await getYoutubeTranscript(contentDoc.link);
             } else if (contentDoc.type === "twitter") {
                 scrapedContext = await getTweetText(contentDoc.link);
-            } else {
-                // Fallback for general web links if you add a 'website' type later
-                scrapedContext = await scrapeWebPage(contentDoc.link);
             }
         }
 

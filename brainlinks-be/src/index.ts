@@ -35,7 +35,19 @@ const signupSchema = z.object({
 
 const contentSchema = z.object({
     title: z.string().min(1),
-    link: z.url().optional().or(z.literal('')),
+    // Absolute http(s) URLs only — anything else (file://, gopher://,
+    // http://169.254.169.254/...) could reach the embed pipeline's scrapers.
+    link: z.string()
+        .refine((v) => {
+            if (v === "") return true;
+            try {
+                const { protocol } = new URL(v);
+                return protocol === "http:" || protocol === "https:";
+            } catch {
+                return false;
+            }
+        }, "Link must be a valid http(s) URL")
+        .optional(),
     textContent: z.string().optional(),
     type: z.enum(["youtube", "twitter", "text"]),
     tags: z.array(z.string().min(1).max(30)).optional()
